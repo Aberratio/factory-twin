@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "id": "order-zl-2041",
+  "lang": "pl",
+  "order": 3,
+  "title": "Zlecenie ZL-2041",
+  "source": "scripted",
+  "model": null,
+  "question": "Czy zlecenie ZL-2041 wyjdzie na czas?",
+  "steps": [
+    {
+      "type": "tool_call",
+      "id": "call_1",
+      "name": "get_orders",
+      "input": {
+        "order_id": "ZL-2041"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "snapshot": "2026-10-21T10:00",
+          "orders": [
+            {
+              "id": "ZL-2041",
+              "product": "Hinge bracket HB-200",
+              "customer": "C-023",
+              "line_id": "L2",
+              "status": "in_progress",
+              "quantity": 1200,
+              "completed": 780,
+              "remaining": 420,
+              "due": "2026-10-22T14:00",
+              "hours_to_due": 28,
+              "hours_needed_incl_queue": 7,
+              "risk": "at_risk",
+              "risk_reasons": [
+                "L2-M2 is down (Servo fault)"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_2",
+      "name": "get_machine_status",
+      "input": {
+        "line_id": "L2"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "snapshot": "2026-10-21T10:00",
+          "machines": [
+            {
+              "id": "L2-M1",
+              "name": "Hydraulic press",
+              "line_id": "L2",
+              "status": "running",
+              "reject_rate_8h": 0
+            },
+            {
+              "id": "L2-M2",
+              "name": "Robotic welding cell",
+              "line_id": "L2",
+              "status": "down",
+              "down_since": "2026-10-21T08:45",
+              "down_minutes": 75,
+              "reason": "Servo fault",
+              "reject_rate_8h": 0
+            },
+            {
+              "id": "L2-M3",
+              "name": "Screwing station",
+              "line_id": "L2",
+              "status": "running",
+              "reject_rate_8h": 0.0125
+            },
+            {
+              "id": "L2-M4",
+              "name": "Leak tester",
+              "line_id": "L2",
+              "status": "running",
+              "reject_rate_8h": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_3",
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": [
+          "L2-M2"
+        ],
+        "tone": "alert"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "highlighted": [
+            "L2-M2"
+          ],
+          "tone": "alert"
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_4",
+      "name": "focus_camera",
+      "input": {
+        "target": "L2"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "focused": "L2"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "text": "Zagrożone, ale do uratowania. W ZL-2041 (zawias HB-200) zostało 420 z 1200 sztuk. Linia L2 potrzebuje na to ok. 7 h, a termin mija za 28 h (22.10, 14:00).\nRyzykiem jest L2-M2: gniazdo spawalnicze stoi od 08:45 z awarią serwa, więc L2 nie produkuje.\nNastępny krok: jeśli L2-M2 nie wróci w ciągu ok. 20 godzin, uprzedź klienta C-023 albo przenieś spawanie na inną zmianę."
+    }
+  ]
+}

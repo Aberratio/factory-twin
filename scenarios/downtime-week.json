@@ -1,0 +1,43 @@
+{
+  "id": "downtime-week",
+  "order": 2,
+  "title": {
+    "en": "Biggest downtime",
+    "pl": "Największe przestoje"
+  },
+  "question": {
+    "en": "Which machine lost the most time to breakdowns this week, and why?",
+    "pl": "Która maszyna straciła w tym tygodniu najwięcej czasu przez awarie i dlaczego?"
+  },
+  "plan": [
+    {
+      "name": "get_downtime",
+      "input": {
+        "category": "unplanned"
+      }
+    },
+    {
+      "name": "get_downtime",
+      "input": {
+        "machine_id": "L2-M2"
+      }
+    },
+    {
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": ["L2-M2"],
+        "tone": "alert"
+      }
+    },
+    {
+      "name": "focus_camera",
+      "input": {
+        "target": "L2-M2"
+      }
+    }
+  ],
+  "answer": {
+    "en": "L2-M2, the robotic welding cell: 290 of 500 minutes of unplanned downtime this week, in 4 stoppages.\n- Servo trouble is the pattern: overheating twice (140 min) and a servo fault that is still ongoing (75 min).\n- One wire feed jam (75 min).\nThe next machine, L3-M2, lost only 50 min.\nNext step: have the servo drive and its cooling inspected rather than resetting it again.",
+    "pl": "L2-M2, zrobotyzowane gniazdo spawalnicze: 290 z 500 minut nieplanowanych przestojów w tym tygodniu, w 4 postojach.\n- Powtarza się serwo: dwa razy przegrzanie (140 min) i awaria serwa, która trwa nadal (75 min).\n- Raz zacięcie podajnika drutu (75 min).\nKolejna maszyna, L3-M2, straciła tylko 50 min.\nNastępny krok: przegląd napędu serwo i jego chłodzenia zamiast kolejnego resetu."
+  }
+}
