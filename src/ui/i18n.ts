@@ -1,3 +1,4 @@
+import { isLang } from '../domain/langs';
 import type { Lang, MachineStatus } from '../domain/types';
 
 const STRINGS = {
@@ -106,6 +107,6 @@ export function statusLabel(lang: Lang, status: MachineStatus): string {
 /** ?lang= wins, then the browser language, then English. */
 export function detectLang(params: URLSearchParams, navigatorLanguage: string | undefined): Lang {
   const p = params.get('lang');
-  if (p === 'en' || p === 'pl') return p;
+  if (isLang(p)) return p;
   return navigatorLanguage?.toLowerCase().startsWith('pl') ? 'pl' : 'en';
 }

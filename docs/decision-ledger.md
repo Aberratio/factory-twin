@@ -7,3 +7,8 @@
 - 2026-10-21 · spec · demo is bilingual (EN/PL recordings, `?lang=`); the plant clock is fixed at 2026-10-21T10:00 so every number is reproducible · self
 - 2026-10-21 · standards · `@typescript-eslint/no-non-null-assertion` is off under tests/ only · self
 - 2026-10-21 · standards · flow-tdd followed by hand: no tiller profile exists for personal-brand yet, so verify-claim could not run; gates were run directly · self
+- 2026-10-21 · standards · code review: tool limits stay written twice (JSON schema for Claude, hand validators for execution) — follows from the hand-validator decision; the tools tests pin every limit, so drift fails the suite · self
+- 2026-10-21 · standards · code review: scenario files (scripts only) are cast, not schema-checked, and the recording header is assembled in two scripts — build-time inputs authored in this repo; the recordings they produce are schema-checked and consistency-tested · self
+- 2026-10-21 · spec · code review: answer text numbers are verified by review, not by an automated check — formatted and derived values (1,200; 22.10; "roughly 20 hours") make a numeric matcher brittle; tool results themselves are re-checked by tests · self
+- 2026-10-21 · spec · server-side refusal fallback (`fallbacks: "default"`) kept on, as the claude-api skill prescribes for claude-opus-5-5; the answering model is returned and stored in live recordings (`model`) · self
+- 2026-10-21 · spec · the kokot.it case-study page itself belongs to the kokot-it repo; this repo provides the embeddable build and the iframe contract (README → Embedding) · self

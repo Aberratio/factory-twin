@@ -8,13 +8,15 @@ import { runAgentTurn } from '../server/agent';
 import { createClient, liveModel } from '../server/live-client';
 import { toSceneActions } from '../src/agent/actions';
 import type { Recording } from '../src/agent/transcript';
-import { LANGS } from '../src/domain/langs';
+import { isLang, LANGS } from '../src/domain/langs';
 import type { Lang } from '../src/domain/types';
 
 if (existsSync('.env')) process.loadEnvFile('.env');
 
 const { values } = parseArgs({ options: { only: { type: 'string' }, lang: { type: 'string' } } });
-const langs = values.lang ? [values.lang as Lang] : LANGS;
+if (values.lang !== undefined && !isLang(values.lang))
+  throw new Error(`--lang must be one of ${LANGS.join(', ')}`);
+const langs: readonly Lang[] = values.lang ? [values.lang] : LANGS;
 const scenarios = loadScenarios().filter((s) => !values.only || s.id === values.only);
 if (scenarios.length === 0) throw new Error(`No scenario ${values.only}`);
 

@@ -199,7 +199,7 @@
     },
     {
       "type": "text",
-      "text": "10 of 12 machines are running. Two need attention:\n- L2-M2, robotic welding cell: down since 08:45 with a servo fault (75 min so far).\n- L1-M2, CNC mill: quality alarm, 4% rejects in the last 8 hours (bore diameter out of tolerance).\nOrders: 1 late, 4 at risk, 1 on track. Downtime this week: 680 min.\nNext step: send maintenance to L2-M2 first; it stops the whole welding line."
+      "text": "10 of 12 machines are running. Two need attention:\n- L2-M2, robotic welding cell: down since 08:45 with a servo fault (75 min so far).\n- L1-M2, CNC mill: quality alarm, 4% rejects in the last 8 hours (bore diameter out of tolerance).\nOrders: 1 late, 4 at risk, 1 on track. Downtime this week: 680 min, planned stops included.\nNext step: send maintenance to L2-M2 first; it stops the whole welding line."
     }
   ]
 }

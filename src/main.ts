@@ -2,6 +2,7 @@ import './styles/tokens.css';
 import './styles/app.css';
 import { loadDataset } from './data/browser';
 import { machineStatusRows, plantOverview } from './domain/queries';
+import { isLang } from './domain/langs';
 import type { Lang, MachineStatus } from './domain/types';
 import { listRecordings } from './recordings';
 import { FactoryScene } from './scene/factory-scene';
@@ -163,7 +164,7 @@ function showMachine(id: string | null): void {
 for (const b of document.querySelectorAll<HTMLButtonElement>('[data-lang]')) {
   b.addEventListener('click', () => {
     const next = b.dataset.lang;
-    if ((next !== 'en' && next !== 'pl') || next === lang) return;
+    if (!isLang(next) || next === lang) return;
     lang = next;
     params.set('lang', lang);
     history.replaceState(null, '', `?${params.toString()}`);

@@ -28,8 +28,6 @@ export interface ToolDefinition {
   input_schema: JsonSchemaObject;
 }
 
-export const SCENE_TOOLS = ['highlight_machines', 'focus_camera'] as const;
-
 const machineId = { type: 'string', description: 'Machine id such as "L2-M2".' };
 const lineId = { type: 'string', description: 'Line id: "L1", "L2" or "L3".' };
 
