@@ -1,0 +1,43 @@
+{
+  "id": "order-zl-2041",
+  "order": 3,
+  "title": {
+    "en": "Order ZL-2041",
+    "pl": "Zlecenie ZL-2041"
+  },
+  "question": {
+    "en": "Will order ZL-2041 ship on time?",
+    "pl": "Czy zlecenie ZL-2041 wyjdzie na czas?"
+  },
+  "plan": [
+    {
+      "name": "get_orders",
+      "input": {
+        "order_id": "ZL-2041"
+      }
+    },
+    {
+      "name": "get_machine_status",
+      "input": {
+        "line_id": "L2"
+      }
+    },
+    {
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": ["L2-M2"],
+        "tone": "alert"
+      }
+    },
+    {
+      "name": "focus_camera",
+      "input": {
+        "target": "L2"
+      }
+    }
+  ],
+  "answer": {
+    "en": "At risk, but still recoverable. ZL-2041 (hinge bracket HB-200) has 420 of 1,200 pieces left. Line L2 needs about 7 h for that and the order is due in 28 h (22.10, 14:00).\nThe risk is L2-M2: the welding cell has been down since 08:45 with a servo fault, so L2 is not producing.\nNext step: if L2-M2 is not back within roughly 20 hours, warn customer C-023 or move welding to another shift.",
+    "pl": "Zagrożone, ale do uratowania. W ZL-2041 (zawias HB-200) zostało 420 z 1200 sztuk. Linia L2 potrzebuje na to ok. 7 h, a termin mija za 28 h (22.10, 14:00).\nRyzykiem jest L2-M2: gniazdo spawalnicze stoi od 08:45 z awarią serwa, więc L2 nie produkuje.\nNastępny krok: jeśli L2-M2 nie wróci w ciągu ok. 20 godzin, uprzedź klienta C-023 albo przenieś spawanie na inną zmianę."
+  }
+}

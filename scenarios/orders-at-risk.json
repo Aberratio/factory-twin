@@ -1,0 +1,35 @@
+{
+  "id": "orders-at-risk",
+  "order": 5,
+  "title": {
+    "en": "Orders at risk",
+    "pl": "Zagrożone zlecenia"
+  },
+  "question": {
+    "en": "Which orders are at risk of shipping late?",
+    "pl": "Które zlecenia są zagrożone opóźnieniem?"
+  },
+  "plan": [
+    {
+      "name": "get_orders",
+      "input": {}
+    },
+    {
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": ["L2-M2", "L1-M2"],
+        "tone": "alert"
+      }
+    },
+    {
+      "name": "focus_camera",
+      "input": {
+        "target": "overview"
+      }
+    }
+  ],
+  "answer": {
+    "en": "One order will be late and four are at risk:\n- ZL-2043 (cover plate CP-5) is late: line L3 needs 20 h for the remaining 800 pieces and only 8 h are left.\n- ZL-2041 and ZL-2047 depend on L2-M2, which is down.\n- ZL-2038 and ZL-2050 run on L1, where L1-M2 has a quality alarm.\nZL-2044 is on track.\nNext step: agree a partial delivery for ZL-2043 with customer C-008 today.",
+    "pl": "Jedno zlecenie się spóźni, a cztery są zagrożone:\n- ZL-2043 (pokrywa CP-5) się spóźni: linia L3 potrzebuje 20 h na pozostałe 800 sztuk, a zostało tylko 8 h.\n- ZL-2041 i ZL-2047 zależą od L2-M2, które stoi.\n- ZL-2038 i ZL-2050 idą na L1, gdzie L1-M2 ma alarm jakości.\nZL-2044 idzie zgodnie z planem.\nNastępny krok: jeszcze dziś uzgodnij z klientem C-008 dostawę częściową ZL-2043."
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "quality-alarm",
+  "order": 4,
+  "title": {
+    "en": "Quality alarm",
+    "pl": "Alarm jakości"
+  },
+  "question": {
+    "en": "Where do we have quality problems today?",
+    "pl": "Gdzie mamy dziś problemy z jakością?"
+  },
+  "plan": [
+    {
+      "name": "get_quality",
+      "input": {}
+    },
+    {
+      "name": "get_quality",
+      "input": {
+        "machine_id": "L1-M2"
+      }
+    },
+    {
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": ["L1-M2"],
+        "tone": "alert"
+      }
+    },
+    {
+      "name": "focus_camera",
+      "input": {
+        "target": "L1-M2"
+      }
+    }
+  ],
+  "answer": {
+    "en": "On L1-M2, the CNC mill. Over the last 8 hours it rejected 8 of 200 parts (4%, the alarm limit is 3%), all for bore diameter out of tolerance.\nIt is getting worse: 0, 1, 3 and 4 rejects in the last four hourly checks, all on order ZL-2038.\nEverything else is below 1.5%.\nNext step: check tool wear and the spindle on L1-M2 before the next batch.",
+    "pl": "Na L1-M2, frezarce CNC. W ostatnich 8 godzinach odrzuciła 8 z 200 detali (4%, próg alarmu to 3%), wszystkie przez średnicę otworu poza tolerancją.\nTrend rośnie: 0, 1, 3 i 4 braki w czterech ostatnich kontrolach godzinowych, wszystkie przy zleceniu ZL-2038.\nPozostałe maszyny są poniżej 1,5%.\nNastępny krok: sprawdź zużycie narzędzia i wrzeciono na L1-M2 przed kolejną partią."
+  }
+}

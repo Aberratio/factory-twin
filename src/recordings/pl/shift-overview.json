@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "id": "shift-overview",
+  "lang": "pl",
+  "order": 1,
+  "title": "Sytuacja na zmianie",
+  "source": "scripted",
+  "model": null,
+  "question": "Jak wygląda sytuacja na hali?",
+  "steps": [
+    {
+      "type": "tool_call",
+      "id": "call_1",
+      "name": "get_plant_overview",
+      "input": {},
+      "result": {
+        "ok": true,
+        "data": {
+          "company": "Veldra Components",
+          "site": "Hall A",
+          "snapshot": "2026-10-21T10:00",
+          "lines": [
+            {
+              "id": "L1",
+              "name": "CNC machining",
+              "rate_per_hour": 25,
+              "machines": [
+                {
+                  "id": "L1-M1",
+                  "status": "running"
+                },
+                {
+                  "id": "L1-M2",
+                  "status": "quality_alarm"
+                },
+                {
+                  "id": "L1-M3",
+                  "status": "running"
+                },
+                {
+                  "id": "L1-M4",
+                  "status": "running"
+                }
+              ]
+            },
+            {
+              "id": "L2",
+              "name": "Welding & assembly",
+              "rate_per_hour": 60,
+              "machines": [
+                {
+                  "id": "L2-M1",
+                  "status": "running"
+                },
+                {
+                  "id": "L2-M2",
+                  "status": "down"
+                },
+                {
+                  "id": "L2-M3",
+                  "status": "running"
+                },
+                {
+                  "id": "L2-M4",
+                  "status": "running"
+                }
+              ]
+            },
+            {
+              "id": "L3",
+              "name": "Coating & packing",
+              "rate_per_hour": 40,
+              "machines": [
+                {
+                  "id": "L3-M1",
+                  "status": "running"
+                },
+                {
+                  "id": "L3-M2",
+                  "status": "running"
+                },
+                {
+                  "id": "L3-M3",
+                  "status": "running"
+                },
+                {
+                  "id": "L3-M4",
+                  "status": "running"
+                }
+              ]
+            }
+          ],
+          "status_counts": {
+            "running": 10,
+            "down": 1,
+            "quality_alarm": 1
+          },
+          "machines_down": [
+            "L2-M2"
+          ],
+          "quality_alarms": [
+            "L1-M2"
+          ],
+          "order_risk_counts": {
+            "late": 1,
+            "at_risk": 4,
+            "on_track": 1,
+            "done": 1
+          },
+          "downtime_minutes_7d": 680
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_2",
+      "name": "get_machine_status",
+      "input": {
+        "machine_id": "L2-M2"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "snapshot": "2026-10-21T10:00",
+          "machines": [
+            {
+              "id": "L2-M2",
+              "name": "Robotic welding cell",
+              "line_id": "L2",
+              "status": "down",
+              "down_since": "2026-10-21T08:45",
+              "down_minutes": 75,
+              "reason": "Servo fault",
+              "reject_rate_8h": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_3",
+      "name": "get_machine_status",
+      "input": {
+        "machine_id": "L1-M2"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "snapshot": "2026-10-21T10:00",
+          "machines": [
+            {
+              "id": "L1-M2",
+              "name": "CNC mill",
+              "line_id": "L1",
+              "status": "quality_alarm",
+              "reject_rate_8h": 0.04,
+              "reason": "Bore diameter out of tolerance"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_4",
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": [
+          "L2-M2",
+          "L1-M2"
+        ],
+        "tone": "alert"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "highlighted": [
+            "L2-M2",
+            "L1-M2"
+          ],
+          "tone": "alert"
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_5",
+      "name": "focus_camera",
+      "input": {
+        "target": "overview"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "focused": "overview"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "text": "Pracuje 10 z 12 maszyn. Dwie wymagają uwagi:\n- L2-M2, zrobotyzowane gniazdo spawalnicze: stoi od 08:45, awaria serwa (na razie 75 min).\n- L1-M2, frezarka CNC: alarm jakości, 4% braków w ostatnich 8 godzinach (średnica otworu poza tolerancją).\nZlecenia: 1 spóźnione, 4 zagrożone, 1 zgodnie z planem. Przestoje w tym tygodniu: 680 min.\nNastępny krok: utrzymanie ruchu najpierw do L2-M2, bo zatrzymuje całą linię spawania."
+    }
+  ]
+}

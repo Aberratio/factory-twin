@@ -1,0 +1,47 @@
+{
+  "id": "shift-overview",
+  "order": 1,
+  "title": {
+    "en": "Shift overview",
+    "pl": "Sytuacja na zmianie"
+  },
+  "question": {
+    "en": "How is the hall doing right now?",
+    "pl": "Jak wygląda sytuacja na hali?"
+  },
+  "plan": [
+    {
+      "name": "get_plant_overview",
+      "input": {}
+    },
+    {
+      "name": "get_machine_status",
+      "input": {
+        "machine_id": "L2-M2"
+      }
+    },
+    {
+      "name": "get_machine_status",
+      "input": {
+        "machine_id": "L1-M2"
+      }
+    },
+    {
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": ["L2-M2", "L1-M2"],
+        "tone": "alert"
+      }
+    },
+    {
+      "name": "focus_camera",
+      "input": {
+        "target": "overview"
+      }
+    }
+  ],
+  "answer": {
+    "en": "10 of 12 machines are running. Two need attention:\n- L2-M2, robotic welding cell: down since 08:45 with a servo fault (75 min so far).\n- L1-M2, CNC mill: quality alarm, 4% rejects in the last 8 hours (bore diameter out of tolerance).\nOrders: 1 late, 4 at risk, 1 on track. Downtime this week: 680 min.\nNext step: send maintenance to L2-M2 first; it stops the whole welding line.",
+    "pl": "Pracuje 10 z 12 maszyn. Dwie wymagają uwagi:\n- L2-M2, zrobotyzowane gniazdo spawalnicze: stoi od 08:45, awaria serwa (na razie 75 min).\n- L1-M2, frezarka CNC: alarm jakości, 4% braków w ostatnich 8 godzinach (średnica otworu poza tolerancją).\nZlecenia: 1 spóźnione, 4 zagrożone, 1 zgodnie z planem. Przestoje w tym tygodniu: 680 min.\nNastępny krok: utrzymanie ruchu najpierw do L2-M2, bo zatrzymuje całą linię spawania."
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "id": "orders-at-risk",
+  "lang": "en",
+  "order": 5,
+  "title": "Orders at risk",
+  "source": "scripted",
+  "model": null,
+  "question": "Which orders are at risk of shipping late?",
+  "steps": [
+    {
+      "type": "tool_call",
+      "id": "call_1",
+      "name": "get_orders",
+      "input": {},
+      "result": {
+        "ok": true,
+        "data": {
+          "snapshot": "2026-10-21T10:00",
+          "orders": [
+            {
+              "id": "ZL-2035",
+              "product": "Housing HS-12",
+              "customer": "C-011",
+              "line_id": "L3",
+              "status": "done",
+              "quantity": 600,
+              "completed": 600,
+              "remaining": 0,
+              "due": "2026-10-20T16:00",
+              "hours_to_due": -18,
+              "hours_needed_incl_queue": 0,
+              "risk": "done",
+              "risk_reasons": []
+            },
+            {
+              "id": "ZL-2038",
+              "product": "Shaft SH-45",
+              "customer": "C-017",
+              "line_id": "L1",
+              "status": "in_progress",
+              "quantity": 400,
+              "completed": 260,
+              "remaining": 140,
+              "due": "2026-10-21T22:00",
+              "hours_to_due": 12,
+              "hours_needed_incl_queue": 5.6,
+              "risk": "at_risk",
+              "risk_reasons": [
+                "L1-M2 has a quality alarm (4% rejects)"
+              ]
+            },
+            {
+              "id": "ZL-2041",
+              "product": "Hinge bracket HB-200",
+              "customer": "C-023",
+              "line_id": "L2",
+              "status": "in_progress",
+              "quantity": 1200,
+              "completed": 780,
+              "remaining": 420,
+              "due": "2026-10-22T14:00",
+              "hours_to_due": 28,
+              "hours_needed_incl_queue": 7,
+              "risk": "at_risk",
+              "risk_reasons": [
+                "L2-M2 is down (Servo fault)"
+              ]
+            },
+            {
+              "id": "ZL-2043",
+              "product": "Cover plate CP-5",
+              "customer": "C-008",
+              "line_id": "L3",
+              "status": "in_progress",
+              "quantity": 900,
+              "completed": 100,
+              "remaining": 800,
+              "due": "2026-10-21T18:00",
+              "hours_to_due": 8,
+              "hours_needed_incl_queue": 20,
+              "risk": "late",
+              "risk_reasons": [
+                "needs 20 h of line time, 8 h left"
+              ]
+            },
+            {
+              "id": "ZL-2044",
+              "product": "Frame panel FP-10",
+              "customer": "C-031",
+              "line_id": "L3",
+              "status": "in_progress",
+              "quantity": 300,
+              "completed": 220,
+              "remaining": 80,
+              "due": "2026-10-23T10:00",
+              "hours_to_due": 48,
+              "hours_needed_incl_queue": 22,
+              "risk": "on_track",
+              "risk_reasons": []
+            },
+            {
+              "id": "ZL-2047",
+              "product": "Hinge bracket HB-210",
+              "customer": "C-023",
+              "line_id": "L2",
+              "status": "queued",
+              "quantity": 800,
+              "completed": 0,
+              "remaining": 800,
+              "due": "2026-10-24T10:00",
+              "hours_to_due": 72,
+              "hours_needed_incl_queue": 20.3,
+              "risk": "at_risk",
+              "risk_reasons": [
+                "L2-M2 is down (Servo fault)"
+              ]
+            },
+            {
+              "id": "ZL-2050",
+              "product": "Flange FL-80",
+              "customer": "C-017",
+              "line_id": "L1",
+              "status": "queued",
+              "quantity": 500,
+              "completed": 0,
+              "remaining": 500,
+              "due": "2026-10-25T14:00",
+              "hours_to_due": 100,
+              "hours_needed_incl_queue": 25.6,
+              "risk": "at_risk",
+              "risk_reasons": [
+                "L1-M2 has a quality alarm (4% rejects)"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_2",
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": [
+          "L2-M2",
+          "L1-M2"
+        ],
+        "tone": "alert"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "highlighted": [
+            "L2-M2",
+            "L1-M2"
+          ],
+          "tone": "alert"
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_3",
+      "name": "focus_camera",
+      "input": {
+        "target": "overview"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "focused": "overview"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "text": "One order will be late and four are at risk:\n- ZL-2043 (cover plate CP-5) is late: line L3 needs 20 h for the remaining 800 pieces and only 8 h are left.\n- ZL-2041 and ZL-2047 depend on L2-M2, which is down.\n- ZL-2038 and ZL-2050 run on L1, where L1-M2 has a quality alarm.\nZL-2044 is on track.\nNext step: agree a partial delivery for ZL-2043 with customer C-008 today."
+    }
+  ]
+}

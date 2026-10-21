@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "id": "downtime-week",
+  "lang": "en",
+  "order": 2,
+  "title": "Biggest downtime",
+  "source": "scripted",
+  "model": null,
+  "question": "Which machine lost the most time to breakdowns this week, and why?",
+  "steps": [
+    {
+      "type": "tool_call",
+      "id": "call_1",
+      "name": "get_downtime",
+      "input": {
+        "category": "unplanned"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "window": {
+            "from": "2026-10-14T10:00",
+            "to": "2026-10-21T10:00"
+          },
+          "total_minutes": 500,
+          "by_machine": [
+            {
+              "machine_id": "L2-M2",
+              "minutes": 290,
+              "events": 4
+            },
+            {
+              "machine_id": "L3-M2",
+              "minutes": 50,
+              "events": 1
+            },
+            {
+              "machine_id": "L1-M1",
+              "minutes": 45,
+              "events": 1
+            },
+            {
+              "machine_id": "L1-M2",
+              "minutes": 40,
+              "events": 1
+            },
+            {
+              "machine_id": "L2-M4",
+              "minutes": 40,
+              "events": 1
+            },
+            {
+              "machine_id": "L3-M4",
+              "minutes": 35,
+              "events": 1
+            }
+          ],
+          "by_cause": [
+            {
+              "cause": "Servo overheating",
+              "minutes": 140,
+              "events": 2
+            },
+            {
+              "cause": "Servo fault",
+              "minutes": 75,
+              "events": 1
+            },
+            {
+              "cause": "Wire feed jam",
+              "minutes": 75,
+              "events": 1
+            },
+            {
+              "cause": "Burner ignition fault",
+              "minutes": 50,
+              "events": 1
+            },
+            {
+              "cause": "Coolant pump failure",
+              "minutes": 45,
+              "events": 1
+            },
+            {
+              "cause": "Pressure sensor fault",
+              "minutes": 40,
+              "events": 1
+            },
+            {
+              "cause": "Spindle probe calibration",
+              "minutes": 40,
+              "events": 1
+            },
+            {
+              "cause": "Material shortage",
+              "minutes": 35,
+              "events": 1
+            }
+          ],
+          "events": [
+            {
+              "id": "DT-113",
+              "machine_id": "L2-M2",
+              "start": "2026-10-21T08:45",
+              "end": null,
+              "ongoing": true,
+              "minutes": 75,
+              "category": "unplanned",
+              "cause": "Servo fault"
+            },
+            {
+              "id": "DT-112",
+              "machine_id": "L2-M2",
+              "start": "2026-10-20T22:30",
+              "end": "2026-10-20T23:20",
+              "ongoing": false,
+              "minutes": 50,
+              "category": "unplanned",
+              "cause": "Servo overheating"
+            },
+            {
+              "id": "DT-110",
+              "machine_id": "L3-M2",
+              "start": "2026-10-19T16:10",
+              "end": "2026-10-19T17:00",
+              "ongoing": false,
+              "minutes": 50,
+              "category": "unplanned",
+              "cause": "Burner ignition fault"
+            },
+            {
+              "id": "DT-108",
+              "machine_id": "L3-M4",
+              "start": "2026-10-18T12:00",
+              "end": "2026-10-18T12:35",
+              "ongoing": false,
+              "minutes": 35,
+              "category": "unplanned",
+              "cause": "Material shortage"
+            },
+            {
+              "id": "DT-107",
+              "machine_id": "L1-M1",
+              "start": "2026-10-18T10:20",
+              "end": "2026-10-18T11:05",
+              "ongoing": false,
+              "minutes": 45,
+              "category": "unplanned",
+              "cause": "Coolant pump failure"
+            },
+            {
+              "id": "DT-105",
+              "machine_id": "L2-M2",
+              "start": "2026-10-17T13:00",
+              "end": "2026-10-17T14:15",
+              "ongoing": false,
+              "minutes": 75,
+              "category": "unplanned",
+              "cause": "Wire feed jam"
+            },
+            {
+              "id": "DT-106",
+              "machine_id": "L2-M4",
+              "start": "2026-10-17T09:15",
+              "end": "2026-10-17T09:55",
+              "ongoing": false,
+              "minutes": 40,
+              "category": "unplanned",
+              "cause": "Pressure sensor fault"
+            },
+            {
+              "id": "DT-104",
+              "machine_id": "L1-M2",
+              "start": "2026-10-16T14:00",
+              "end": "2026-10-16T14:40",
+              "ongoing": false,
+              "minutes": 40,
+              "category": "unplanned",
+              "cause": "Spindle probe calibration"
+            },
+            {
+              "id": "DT-103",
+              "machine_id": "L2-M2",
+              "start": "2026-10-15T08:10",
+              "end": "2026-10-15T09:40",
+              "ongoing": false,
+              "minutes": 90,
+              "category": "unplanned",
+              "cause": "Servo overheating"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_2",
+      "name": "get_downtime",
+      "input": {
+        "machine_id": "L2-M2"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "window": {
+            "from": "2026-10-14T10:00",
+            "to": "2026-10-21T10:00"
+          },
+          "total_minutes": 290,
+          "by_machine": [
+            {
+              "machine_id": "L2-M2",
+              "minutes": 290,
+              "events": 4
+            }
+          ],
+          "by_cause": [
+            {
+              "cause": "Servo overheating",
+              "minutes": 140,
+              "events": 2
+            },
+            {
+              "cause": "Servo fault",
+              "minutes": 75,
+              "events": 1
+            },
+            {
+              "cause": "Wire feed jam",
+              "minutes": 75,
+              "events": 1
+            }
+          ],
+          "events": [
+            {
+              "id": "DT-113",
+              "machine_id": "L2-M2",
+              "start": "2026-10-21T08:45",
+              "end": null,
+              "ongoing": true,
+              "minutes": 75,
+              "category": "unplanned",
+              "cause": "Servo fault"
+            },
+            {
+              "id": "DT-112",
+              "machine_id": "L2-M2",
+              "start": "2026-10-20T22:30",
+              "end": "2026-10-20T23:20",
+              "ongoing": false,
+              "minutes": 50,
+              "category": "unplanned",
+              "cause": "Servo overheating"
+            },
+            {
+              "id": "DT-105",
+              "machine_id": "L2-M2",
+              "start": "2026-10-17T13:00",
+              "end": "2026-10-17T14:15",
+              "ongoing": false,
+              "minutes": 75,
+              "category": "unplanned",
+              "cause": "Wire feed jam"
+            },
+            {
+              "id": "DT-103",
+              "machine_id": "L2-M2",
+              "start": "2026-10-15T08:10",
+              "end": "2026-10-15T09:40",
+              "ongoing": false,
+              "minutes": 90,
+              "category": "unplanned",
+              "cause": "Servo overheating"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_3",
+      "name": "highlight_machines",
+      "input": {
+        "machine_ids": [
+          "L2-M2"
+        ],
+        "tone": "alert"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "highlighted": [
+            "L2-M2"
+          ],
+          "tone": "alert"
+        }
+      }
+    },
+    {
+      "type": "tool_call",
+      "id": "call_4",
+      "name": "focus_camera",
+      "input": {
+        "target": "L2-M2"
+      },
+      "result": {
+        "ok": true,
+        "data": {
+          "focused": "L2-M2"
+        }
+      }
+    },
+    {
+      "type": "text",
+      "text": "L2-M2, the robotic welding cell: 290 of 500 minutes of unplanned downtime this week, in 4 stoppages.\n- Servo trouble is the pattern: overheating twice (140 min) and a servo fault that is still ongoing (75 min).\n- One wire feed jam (75 min).\nThe next machine, L3-M2, lost only 50 min.\nNext step: have the servo drive and its cooling inspected rather than resetting it again."
+    }
+  ]
+}
