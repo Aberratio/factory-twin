@@ -55,6 +55,7 @@ export class Chat {
     this.o.els.form?.removeEventListener('submit', this.onSubmit);
     this.stop();
     this.setBusy(false);
+    this.o.scene.reset();
   }
 
   playRecording(rec: Recording): void {
