@@ -33,6 +33,7 @@ const scene = new FactoryScene($('scene'), ds, {
 });
 
 let chat: Chat | undefined;
+let autoplayTimer: number | undefined;
 
 function render(): void {
   const t = strings(lang);
@@ -69,7 +70,7 @@ function render(): void {
   $('footer').replaceChildren(`${t.footer} `, link);
 
   scene.setLang(lang);
-  chat?.stop();
+  chat?.dispose();
   $('log').replaceChildren();
   chat = new Chat({
     ds,
@@ -168,6 +169,7 @@ for (const b of document.querySelectorAll<HTMLButtonElement>('[data-lang]')) {
     lang = next;
     params.set('lang', lang);
     history.replaceState(null, '', `?${params.toString()}`);
+    window.clearTimeout(autoplayTimer);
     showMachine(null);
     render();
   });
@@ -178,5 +180,6 @@ render();
 if (autoplay) {
   const recordings = listRecordings(lang);
   const first = recordings.find((r) => r.id === params.get('scenario')) ?? recordings[0];
-  if (first) window.setTimeout(() => chat?.playRecording(first), reducedMotion ? 0 : 700);
+  if (first)
+    autoplayTimer = window.setTimeout(() => chat?.playRecording(first), reducedMotion ? 0 : 700);
 }

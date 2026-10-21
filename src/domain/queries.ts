@@ -22,7 +22,7 @@ export function machineStates(ds: Dataset): MachineState[] {
   return ds.machines.map((machine) => {
     const openEvent = ds.downtime.find((e) => e.machineId === machine.id && e.end === null) ?? null;
     const q = quality.get(machine.id);
-    const rejectRate = q ? q.rejected / q.inspected : 0;
+    const rejectRate = q?.inspected ? q.rejected / q.inspected : 0;
     const status: MachineStatus = openEvent
       ? 'down'
       : rejectRate >= ds.plant.thresholds.qualityAlarmRejectRate

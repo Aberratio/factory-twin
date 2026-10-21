@@ -334,3 +334,63 @@ describe('determinism', () => {
     }
   });
 });
+
+describe('validators enforce every limit the schemas advertise', () => {
+  // Generated from TOOL_DEFINITIONS, so a limit changed on one side only fails here.
+  interface Prop {
+    type?: string;
+    enum?: string[];
+    minimum?: number;
+    maximum?: number;
+    minItems?: number;
+    maxItems?: number;
+  }
+  const valid: Record<string, Record<string, unknown>> = {
+    highlight_machines: { machine_ids: ['L1-M1'] },
+    focus_camera: { target: 'L1' },
+  };
+  const cases: [string, string, unknown][] = [];
+  for (const t of TOOL_DEFINITIONS) {
+    for (const [key, raw] of Object.entries(t.input_schema.properties)) {
+      const p = raw as Prop;
+      if (p.enum) cases.push([t.name, key, 'not-an-option']);
+      if (p.type === 'string') cases.push([t.name, key, 42]);
+      if (p.type === 'integer') {
+        if (p.minimum !== undefined) cases.push([t.name, key, p.minimum - 1]);
+        if (p.maximum !== undefined) cases.push([t.name, key, p.maximum + 1]);
+        cases.push([t.name, key, '3']);
+      }
+      if (p.type === 'array') {
+        if (p.minItems !== undefined) cases.push([t.name, key, []]);
+        if (p.maxItems !== undefined) {
+          cases.push([t.name, key, Array.from({ length: p.maxItems + 1 }, () => 'L1-M1')]);
+        }
+      }
+    }
+  }
+
+  it('covers every bounded field of every tool', () => {
+    expect(cases.length).toBeGreaterThanOrEqual(20);
+  });
+
+  it.each(cases)('%s rejects %s = %j', (tool, key, value) => {
+    const r = run(tool, { ...(valid[tool] ?? {}), [key]: value });
+    expect(r.ok).toBe(false);
+  });
+
+  it('accepts the boundary values themselves', () => {
+    expect(run('get_downtime', { days: 1 }).ok).toBe(true);
+    expect(run('get_downtime', { days: 7 }).ok).toBe(true);
+    expect(run('get_quality', { hours: 1 }).ok).toBe(true);
+    expect(run('get_quality', { hours: 168 }).ok).toBe(true);
+    const twelve = ds.machines.map((m) => m.id);
+    expect(twelve).toHaveLength(12);
+    expect(run('highlight_machines', { machine_ids: twelve }).ok).toBe(true);
+  });
+
+  it('rejects an unknown line id with the list of valid ones', () => {
+    const r = run('get_orders', { line_id: 'L9' });
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error).toMatch(/L9.*L1, L2, L3/);
+  });
+});

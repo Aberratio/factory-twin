@@ -129,6 +129,36 @@ describe('runAgentTurn', () => {
     ]);
   });
 
+  it('stops when the answer was cut off by max_tokens, without running its tools', async () => {
+    const { client, requests } = fakeClient([
+      message([toolUse('tu_1', 'get_downtime', {})], 'max_tokens'),
+    ]);
+    await expect(
+      runAgentTurn({ client, dataset: ds, question: 'x', lang: 'en', history: [] }),
+    ).rejects.toThrow(/max_tokens/);
+    expect(requests).toHaveLength(1);
+  });
+
+  it('continues a paused turn by sending the assistant content back, with no tool results', async () => {
+    const { client, requests } = fakeClient([
+      message([text('Looking at the data.')], 'pause_turn'),
+      message([text('Done.')], 'end_turn'),
+    ]);
+    const turn = await runAgentTurn({
+      client,
+      dataset: ds,
+      question: 'x',
+      lang: 'en',
+      history: [],
+    });
+    expect(requests).toHaveLength(2);
+    expect(requests[1]!.messages.at(-1)).toMatchObject({ role: 'assistant' });
+    expect(turn.transcript.steps).toEqual([
+      { type: 'text', text: 'Looking at the data.' },
+      { type: 'text', text: 'Done.' },
+    ]);
+  });
+
   it('stops on a refusal without running the refused turn', async () => {
     const { client } = fakeClient([message([toolUse('tu_1', 'get_downtime', {})], 'refusal')]);
     await expect(

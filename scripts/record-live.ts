@@ -1,4 +1,4 @@
-// Records the scenarios against the real Claude API: `npm run record [-- --only <id>] [-- --lang pl]`.
+// Records the scenarios against the real Claude API: `npm run record -- [--only <id>] [--lang pl]`.
 // Needs ANTHROPIC_API_KEY in .env. Overwrites src/recordings/<lang>/<id>.json with source "live".
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';

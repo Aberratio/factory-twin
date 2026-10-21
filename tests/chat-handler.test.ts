@@ -138,6 +138,23 @@ describe('POST /api/chat', () => {
     });
   });
 
+  it('reports a rejected key as 502 without echoing the API error', async () => {
+    const url = await start(() =>
+      client(async () => {
+        throw new Anthropic.AuthenticationError(
+          401,
+          undefined,
+          'invalid x-api-key sk-ant-...',
+          new Headers(),
+        );
+      }),
+    );
+    expect(await post(url, JSON.stringify({ question: 'x' }))).toEqual({
+      status: 502,
+      body: { error: 'The API key was rejected.' },
+    });
+  });
+
   it('never leaks an unexpected error message to the browser', async () => {
     const url = await start(() =>
       client(async () => {

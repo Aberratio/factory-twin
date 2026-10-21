@@ -134,6 +134,26 @@ describe('Chat', () => {
     expect(document.querySelector('.thinking')).toBeNull();
   });
 
+  it('dispose (language switch): aborts the pending request and stops listening to the shared form', async () => {
+    const { fetchMock, calls, release } = deferredFetch();
+    vi.stubGlobal('fetch', fetchMock);
+    const { chat, applied } = mount(true);
+    const pending = chat.askLive('Is L3 ok?');
+    chat.dispose();
+    release(liveAnswer);
+    await pending;
+    await vi.runAllTimersAsync();
+    expect(calls[0]?.signal?.aborted).toBe(true);
+    expect(applied).toEqual([]);
+    expect(document.documentElement.dataset.chat).toBe('idle');
+
+    // a submit on the shared form after dispose must not reach the old panel
+    const input = document.getElementById('question') as HTMLInputElement;
+    input.value = 'Anything?';
+    document.getElementById('composer')?.dispatchEvent(new Event('submit', { cancelable: true }));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('rejects a malformed live answer instead of passing it to the scene', async () => {
     const { fetchMock, release } = deferredFetch();
     vi.stubGlobal('fetch', fetchMock);
