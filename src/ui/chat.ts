@@ -41,11 +41,20 @@ export class Chat {
     const t = strings(o.lang);
     o.els.intro.textContent = o.live ? t.chatIntroLive : t.chatIntroRecorded;
     this.renderScenarios();
-    o.els.form?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const q = o.els.input?.value.trim();
-      if (q && !this.busy) void this.askLive(q);
-    });
+    o.els.form?.addEventListener('submit', this.onSubmit);
+  }
+
+  private readonly onSubmit = (e: Event) => {
+    e.preventDefault();
+    const q = this.o.els.input?.value.trim();
+    if (q && !this.busy) void this.askLive(q);
+  };
+
+  /** Detaches this panel from the shared DOM (language switch): no listener, no pending turn. */
+  dispose(): void {
+    this.o.els.form?.removeEventListener('submit', this.onSubmit);
+    this.stop();
+    this.setBusy(false);
   }
 
   playRecording(rec: Recording): void {

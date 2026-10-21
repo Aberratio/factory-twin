@@ -50,6 +50,16 @@ describe('machine status rule', () => {
     expect(statusOf('', 'Q1,2026-01-10T04:01,A-1,O,10,5,Burr\n')).toBe('quality_alarm');
   });
 
+  it('a check with nothing inspected does not produce NaN or an alarm', () => {
+    const empty = 'Q1,2026-01-10T11:00,A-1,O,0,0,\n';
+    expect(statusOf('', empty)).toBe('running');
+    const ds = buildDataset({ plant, downtimeCsv: DT, qualityCsv: QC + empty, ordersCsv: OR });
+    const r = executeTool(ds, 'get_machine_status', { machine_id: 'A-1' });
+    expect(
+      r.ok && (r.data as { machines: { reject_rate_8h: number }[] }).machines[0]?.reject_rate_8h,
+    ).toBe(0);
+  });
+
   it('down wins over a quality alarm', () => {
     expect(
       statusOf('D1,A-1,2026-01-10T11:00,,unplanned,Jam\n', 'Q1,2026-01-10T11:00,A-1,O,10,5,Burr\n'),

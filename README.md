@@ -192,3 +192,6 @@ The tests cover:
   stopped or alarming machine on the line marks its orders at risk.
 - Machines are built from primitives, not CAD models.
 - The 3D view needs WebGL.
+- Inter and JetBrains Mono load from Google Fonts, as the temporary brand tokens specify. For an
+  EU site, self-hosting the fonts (one `@font-face` block next to `tokens.css`) avoids sending
+  visitors' IP addresses to Google.
