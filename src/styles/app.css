@@ -145,7 +145,7 @@ input {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   font-size: var(--text-sm);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(var(--blur));
 }
 .kpi strong {
   font-family: var(--font-mono);
@@ -187,8 +187,8 @@ input {
   background: color-mix(in srgb, var(--color-surface) 80%, transparent);
   border: 1px solid var(--color-border);
   border-left: 3px solid var(--status-running);
-  border-radius: 4px;
-  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  padding: var(--chip-padding);
   white-space: nowrap;
   transition: opacity 0.3s;
 }
@@ -201,7 +201,7 @@ input {
 .label-machine .label-name {
   display: none;
   color: var(--color-text-muted);
-  margin-left: 6px;
+  margin-left: var(--space-2);
 }
 .label-machine.is-highlighted {
   border-color: var(--scene-highlight);
@@ -362,8 +362,8 @@ input {
   font-size: var(--text-2xs);
   color: var(--color-text-muted);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  padding: var(--chip-padding);
 }
 .step--action {
   color: var(--color-accent);
@@ -451,7 +451,7 @@ input {
 .embed .app {
   grid-template-rows: 1fr;
   grid-template-areas: 'stage chat';
-  --chat-width: 340px;
+  --chat-width: var(--chat-width-embed);
 }
 .embed .topbar,
 .embed .footer {
@@ -500,7 +500,7 @@ input {
   }
   .label-machine {
     font-size: var(--text-3xs);
-    padding: 0 4px;
+    padding: 0 var(--space-1);
   }
   .kpi {
     font-size: var(--text-xs);

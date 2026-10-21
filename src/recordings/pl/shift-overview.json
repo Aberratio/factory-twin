@@ -199,7 +199,7 @@
     },
     {
       "type": "text",
-      "text": "Pracuje 10 z 12 maszyn. Dwie wymagają uwagi:\n- L2-M2, zrobotyzowane gniazdo spawalnicze: stoi od 08:45, awaria serwa (na razie 75 min).\n- L1-M2, frezarka CNC: alarm jakości, 4% braków w ostatnich 8 godzinach (średnica otworu poza tolerancją).\nZlecenia: 1 spóźnione, 4 zagrożone, 1 zgodnie z planem. Przestoje w tym tygodniu: 680 min.\nNastępny krok: utrzymanie ruchu najpierw do L2-M2, bo zatrzymuje całą linię spawania."
+      "text": "Pracuje 10 z 12 maszyn. Dwie wymagają uwagi:\n- L2-M2, zrobotyzowane gniazdo spawalnicze: stoi od 08:45, awaria serwa (na razie 75 min).\n- L1-M2, frezarka CNC: alarm jakości, 4% braków w ostatnich 8 godzinach (średnica otworu poza tolerancją).\nZlecenia: 1 spóźnione, 4 zagrożone, 1 zgodnie z planem. Przestoje w tym tygodniu: 680 min, łącznie z planowanymi.\nNastępny krok: utrzymanie ruchu najpierw do L2-M2, bo zatrzymuje całą linię spawania."
     }
   ]
 }

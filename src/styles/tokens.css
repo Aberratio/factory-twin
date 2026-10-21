@@ -49,8 +49,12 @@
   --space-4: 1rem;
   --space-5: 1.5rem;
   --space-6: 2rem;
+  --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 10px;
   --chat-width: 380px;
+  --chat-width-embed: 340px;
+  --chip-padding: 1px 6px;
+  --blur: 6px;
   --shadow: 0 8px 24px rgb(0 0 0 / 0.35);
 }

@@ -1,6 +1,6 @@
 import type { SceneAction } from '../agent/actions';
 import { buildTimeline, type TimelineEvent } from '../agent/player';
-import type { Recording, Transcript } from '../agent/transcript';
+import { parseTranscript, type Recording, type Transcript } from '../agent/transcript';
 import type { Dataset, Lang } from '../domain/types';
 import type { FactoryScene } from '../scene/factory-scene';
 import { renderAnswer } from './format';
@@ -68,7 +68,8 @@ export class Chat {
       if (!res.ok || 'error' in json)
         throw new Error('error' in json ? json.error : res.statusText);
       // Live answers replay through the same timeline as recordings; the question is already shown.
-      this.play(json.transcript, { skipQuestion: true, body });
+      // The response is untrusted input: validate it like a recording before it reaches the scene.
+      this.play(parseTranscript(json.transcript), { skipQuestion: true, body });
     } catch (err) {
       thinking.remove();
       const p = document.createElement('p');

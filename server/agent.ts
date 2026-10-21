@@ -7,7 +7,7 @@ import type { Dataset, Lang } from '../src/domain/types';
 export const DEFAULT_MODEL = 'claude-opus-5-5';
 const MAX_ROUNDS = 8;
 
-/** The one SDK call the loop needs; the real client is adapted to it in live-server.ts, tests pass a fake. */
+/** The one SDK call the loop needs; the real client is adapted to it in live-client.ts, tests pass a fake. */
 export interface MessagesClient {
   beta: {
     messages: {

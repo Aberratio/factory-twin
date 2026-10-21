@@ -1,3 +1,4 @@
+import { isLang } from '../domain/langs';
 import type { Lang } from '../domain/types';
 import type { ToolResult } from './tools';
 
@@ -45,18 +46,28 @@ function parseStep(v: unknown, i: number): TranscriptStep {
   throw new Error(`step ${i}: unknown type ${String(v.type)}`);
 }
 
+/** Validates a transcript from an untrusted source (a live /api/chat response, a JSON file). */
+export function parseTranscript(v: unknown): Transcript {
+  if (!isObj(v)) throw new Error('transcript: not an object');
+  if (typeof v.question !== 'string' || !v.question)
+    throw new Error('transcript: question required');
+  if (!Array.isArray(v.steps)) throw new Error('transcript: steps must be a list');
+  return { question: v.question, steps: v.steps.map(parseStep) };
+}
+
 /** Validates a recording loaded from JSON; throws with the reason on anything malformed. */
 export function parseRecording(v: unknown): Recording {
   if (!isObj(v)) throw new Error('recording: not an object');
   if (v.schemaVersion !== 1) throw new Error('recording: schemaVersion must be 1');
-  for (const k of ['id', 'title', 'question'] as const) {
+  for (const k of ['id', 'title'] as const) {
     if (typeof v[k] !== 'string' || !v[k]) throw new Error(`recording: ${k} required`);
   }
-  if (v.lang !== 'en' && v.lang !== 'pl') throw new Error('recording: lang must be en or pl');
+  if (!isLang(v.lang)) throw new Error('recording: lang must be en or pl');
   if (typeof v.order !== 'number') throw new Error('recording: order required');
   if (v.source !== 'scripted' && v.source !== 'live') throw new Error('recording: bad source');
   if (v.model !== null && typeof v.model !== 'string') throw new Error('recording: bad model');
-  if (!Array.isArray(v.steps) || v.steps.length === 0) throw new Error('recording: steps required');
+  const { question, steps } = parseTranscript(v);
+  if (steps.length === 0) throw new Error('recording: steps required');
   return {
     schemaVersion: 1,
     id: v.id as string,
@@ -65,7 +76,7 @@ export function parseRecording(v: unknown): Recording {
     title: v.title as string,
     source: v.source,
     model: v.model as string | null,
-    question: v.question as string,
-    steps: v.steps.map(parseStep),
+    question,
+    steps,
   };
 }

@@ -1,3 +1,4 @@
+import { isLang } from '../src/domain/langs';
 import type { Lang } from '../src/domain/types';
 import type { HistoryTurn } from './agent';
 
@@ -25,7 +26,7 @@ export function parseChatRequest(
     return { ok: false, error: `question is longer than ${MAX_QUESTION} characters` };
 
   const lang = b.lang ?? 'en';
-  if (lang !== 'en' && lang !== 'pl') return { ok: false, error: 'lang must be en or pl' };
+  if (!isLang(lang)) return { ok: false, error: 'lang must be en or pl' };
 
   const history = b.history ?? [];
   if (!Array.isArray(history) || history.length > MAX_HISTORY) {
