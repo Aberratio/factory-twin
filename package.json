@@ -4,7 +4,7 @@
   "description": "3D digital twin of a production hall with an AI agent (recorded and live modes).",
   "scripts": {
     "dev": "vite --configLoader runner",
-    "dev:live": "vite --configLoader runner --mode live",
+    "dev:live": "vite --mode live",
     "build": "tsc --noEmit && vite build --configLoader runner",
     "preview": "vite preview --configLoader runner",
     "test": "vitest run --configLoader runner",

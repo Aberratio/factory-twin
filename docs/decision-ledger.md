@@ -14,3 +14,4 @@
 - 2026-10-21 · spec · the kokot.it case-study page itself belongs to the kokot-it repo; this repo provides the embeddable build and the iframe contract (README → Embedding) · self
 - 2026-10-21 · standards · new devDependencies: `playwright` (screenshots and browser smoke tests; pinned 1.57.0 to reuse the locally cached Chromium build) and `happy-dom` (chat-panel DOM tests); both dev-only, `npm audit` 0 vulnerabilities, neither reaches the static bundle · self
 - 2026-10-21 · standards · the scene exposes `data-loop="running|paused"` and the page `data-chat="busy|idle"` — observable state for the browser test and for an embedding page; no behaviour depends on them · self
+- 2026-10-21 · standards · `dev:live` uses Vite's default config loader, the other scripts use `--configLoader runner` — the runner closes after loading the config, which breaks the live plugin's later module loads; `runner` elsewhere only silences extensionless-import notices · self
