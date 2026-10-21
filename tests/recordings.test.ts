@@ -3,7 +3,7 @@ import { listRecordings, LANGS } from '../src/recordings';
 import { executeTool } from '../src/agent/tools';
 import { toSceneActions } from '../src/agent/actions';
 import { buildTimeline } from '../src/agent/player';
-import { parseRecording } from '../src/agent/transcript';
+import { parseRecording, type Recording } from '../src/agent/transcript';
 import { buildScriptedRecording, loadScenarios } from '../server/recordings';
 import { demoDataset } from './helpers';
 
@@ -19,12 +19,39 @@ describe('recorded scenarios', () => {
 
   // Scripted recordings share one tool plan across languages by construction; a live capture
   // (`npm run record`) may legitimately take a different path in each language.
-  it('runs the same tool calls in every language (scripted recordings)', () => {
-    const calls = (lang: (typeof LANGS)[number]) =>
-      listRecordings(lang)
-        .filter((r) => r.source === 'scripted')
-        .map((r) => r.steps.flatMap((s) => (s.type === 'tool_call' ? [[s.name, s.input]] : [])));
-    for (const lang of LANGS.slice(1)) expect(calls(lang)).toEqual(calls('en'));
+  // Matched by scenario id, so one language re-recorded live does not shift the comparison.
+  const pairedScripted = (recordings: Record<string, Recording[]>) =>
+    recordings
+      .en!.filter((en) => en.source === 'scripted')
+      .flatMap((en) =>
+        LANGS.slice(1).flatMap((lang) => {
+          const other = recordings[lang]?.find((r) => r.id === en.id);
+          return other?.source === 'scripted' ? [[en, other] as const] : [];
+        }),
+      );
+  const calls = (r: Recording) =>
+    r.steps.flatMap((s) => (s.type === 'tool_call' ? [[s.name, s.input]] : []));
+  const shipped = () => Object.fromEntries(LANGS.map((l) => [l, listRecordings(l)]));
+
+  it('runs the same tool calls in every language (scenarios scripted in both)', () => {
+    const pairs = pairedScripted(shipped());
+    expect(pairs.length).toBeGreaterThanOrEqual(3);
+    for (const [en, other] of pairs)
+      expect(calls(other), `${other.lang}/${en.id}`).toEqual(calls(en));
+  });
+
+  it('pin: one language replaced by a live capture leaves the others compared pairwise', () => {
+    // as after `npm run record -- --only quality-alarm --lang pl`
+    const recs = shipped();
+    recs.pl = recs.pl!.map((r) =>
+      r.id === 'quality-alarm' ? { ...r, source: 'live' as const } : r,
+    );
+    expect(pairedScripted(recs).map(([en]) => en.id)).toEqual([
+      'shift-overview',
+      'downtime-week',
+      'order-zl-2041',
+      'orders-at-risk',
+    ]);
   });
 
   for (const lang of LANGS) {
