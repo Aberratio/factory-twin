@@ -1,0 +1,11 @@
+/* Design tokens: the single place for colours, fonts and spacing (scene included). */
+:root {
+  --color-bg: #0b0f14;
+  --color-surface: #121821;
+  --color-text: #e6edf3;
+  --color-text-muted: #9aa7b4;
+  --color-accent: #5eead4;
+  --color-accent-2: #f59e0b;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
