@@ -31,3 +31,7 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+      - name: Browser smoke tests
+        run: npx vitest run --config vitest.e2e.config.ts --configLoader runner

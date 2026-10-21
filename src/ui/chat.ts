@@ -33,6 +33,9 @@ export class Chat {
   private cancel: (() => void)[] = [];
   private history: { question: string; answer: string }[] = [];
   private busy = false;
+  /** Bumped by every new turn; an answer from an older turn is dropped. */
+  private turn = 0;
+  private request: AbortController | null = null;
 
   constructor(private readonly o: ChatOptions) {
     const t = strings(o.lang);
@@ -54,6 +57,9 @@ export class Chat {
     const t = strings(this.o.lang);
     if (this.o.els.input) this.o.els.input.value = '';
     this.stop();
+    const turn = this.turn;
+    const request = new AbortController();
+    this.request = request;
     this.setBusy(true);
     const { body } = this.startTurn(question);
     const thinking = this.thinking(body);
@@ -62,9 +68,11 @@ export class Chat {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ question, lang: this.o.lang, history: this.history.slice(-10) }),
+        signal: request.signal,
       });
       const json = (await res.json()) as LiveTurnResponse | { error: string };
       thinking.remove();
+      if (turn !== this.turn) return; // the user moved on; this answer is stale
       if (!res.ok || 'error' in json)
         throw new Error('error' in json ? json.error : res.statusText);
       // Live answers replay through the same timeline as recordings; the question is already shown.
@@ -72,15 +80,20 @@ export class Chat {
       this.play(parseTranscript(json.transcript), { skipQuestion: true, body });
     } catch (err) {
       thinking.remove();
+      if (turn !== this.turn) return; // aborted or superseded: nothing to report
       const p = document.createElement('p');
       p.textContent = `${t.error}: ${(err as Error).message}`;
-      body.parentElement?.classList.add('msg--error');
+      body.classList.add('msg--error');
       body.appendChild(p);
       this.setBusy(false);
     }
   }
 
+  /** Ends the current turn: pending timers stop and a pending live request is aborted. */
   stop(): void {
+    this.turn++;
+    this.request?.abort();
+    this.request = null;
     this.cancel.forEach((c) => c());
     this.cancel = [];
   }

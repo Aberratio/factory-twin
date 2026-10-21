@@ -250,7 +250,7 @@ const HANDLERS: Record<string, Handler> = {
 
 /** Runs a tool by name. Bad input becomes an error result (sent back to Claude as is_error), never an exception. */
 export function executeTool(ds: Dataset, name: string, rawInput: unknown): ToolResult {
-  const handler = HANDLERS[name];
+  const handler = Object.hasOwn(HANDLERS, name) ? HANDLERS[name] : undefined;
   if (!handler) return { ok: false, error: `Unknown tool: ${name}` };
   try {
     return { ok: true, data: handler(ds, asInput(name, rawInput)) };

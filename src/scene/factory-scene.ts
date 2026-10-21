@@ -419,6 +419,8 @@ export class FactoryScene {
       cancelAnimationFrame(this.frame);
       this.frame = 0;
     }
+    // observable state for the browser test and for an embedding page
+    this.container.dataset.loop = shouldRun ? 'running' : 'paused';
   }
 
   private readonly tick = (now: number) => {
