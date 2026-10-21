@@ -1,0 +1,14 @@
+id,timestamp,machine_id,order_id,inspected,rejected,defect
+QC-201,2026-10-17T10:00,L1-M2,ZL-2038,50,0,
+QC-202,2026-10-20T08:00,L1-M2,ZL-2038,50,0,
+QC-203,2026-10-20T14:00,L1-M2,ZL-2038,50,1,Bore diameter out of tolerance
+QC-204,2026-10-21T06:30,L1-M2,ZL-2038,50,0,
+QC-205,2026-10-21T07:30,L1-M2,ZL-2038,50,1,Bore diameter out of tolerance
+QC-206,2026-10-21T08:30,L1-M2,ZL-2038,50,3,Bore diameter out of tolerance
+QC-207,2026-10-21T09:30,L1-M2,ZL-2038,50,4,Bore diameter out of tolerance
+QC-208,2026-10-21T07:00,L1-M1,ZL-2038,60,1,Surface roughness
+QC-209,2026-10-21T09:00,L1-M1,ZL-2038,60,0,
+QC-210,2026-10-21T08:00,L2-M3,ZL-2041,80,1,Missing screw
+QC-211,2026-10-21T07:00,L3-M1,ZL-2043,120,2,Coating thickness below spec
+QC-212,2026-10-21T09:00,L3-M1,ZL-2043,120,1,Coating thickness below spec
+QC-213,2026-10-20T15:00,L2-M4,ZL-2041,100,1,Leak above limit

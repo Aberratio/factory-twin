@@ -1,0 +1,14 @@
+id,machine_id,start,end,category,cause
+DT-101,L1-M1,2026-10-14T07:00,2026-10-14T08:00,planned,Tool change
+DT-102,L3-M2,2026-10-15T06:00,2026-10-15T08:00,planned,Preventive maintenance
+DT-103,L2-M2,2026-10-15T08:10,2026-10-15T09:40,unplanned,Servo overheating
+DT-104,L1-M2,2026-10-16T14:00,2026-10-16T14:40,unplanned,Spindle probe calibration
+DT-105,L2-M2,2026-10-17T13:00,2026-10-17T14:15,unplanned,Wire feed jam
+DT-106,L2-M4,2026-10-17T09:15,2026-10-17T09:55,unplanned,Pressure sensor fault
+DT-107,L1-M1,2026-10-18T10:20,2026-10-18T11:05,unplanned,Coolant pump failure
+DT-108,L3-M4,2026-10-18T12:00,2026-10-18T12:35,unplanned,Material shortage
+DT-109,L2-M1,2026-10-19T07:30,2026-10-19T08:00,planned,Die change
+DT-110,L3-M2,2026-10-19T16:10,2026-10-19T17:00,unplanned,Burner ignition fault
+DT-111,L1-M2,2026-10-20T09:00,2026-10-20T09:30,planned,Preventive maintenance
+DT-112,L2-M2,2026-10-20T22:30,2026-10-20T23:20,unplanned,Servo overheating
+DT-113,L2-M2,2026-10-21T08:45,,unplanned,Servo fault
