@@ -1,0 +1,104 @@
+{
+  "company": {
+    "name": "Veldra Components",
+    "site": "Hall A",
+    "fictional": true
+  },
+  "snapshot": "2026-10-21T10:00",
+  "thresholds": {
+    "qualityAlarmRejectRate": 0.03,
+    "qualityWindowHours": 8,
+    "atRiskLoadFactor": 0.8
+  },
+  "lines": [
+    {
+      "id": "L1",
+      "name": { "en": "CNC machining", "pl": "Obróbka CNC" },
+      "ratePerHour": 25
+    },
+    {
+      "id": "L2",
+      "name": { "en": "Welding & assembly", "pl": "Spawanie i montaż" },
+      "ratePerHour": 60
+    },
+    {
+      "id": "L3",
+      "name": { "en": "Coating & packing", "pl": "Malowanie i pakowanie" },
+      "ratePerHour": 40
+    }
+  ],
+  "machines": [
+    {
+      "id": "L1-M1",
+      "line": "L1",
+      "kind": "lathe",
+      "name": { "en": "CNC lathe", "pl": "Tokarka CNC" }
+    },
+    {
+      "id": "L1-M2",
+      "line": "L1",
+      "kind": "mill",
+      "name": { "en": "CNC mill", "pl": "Frezarka CNC" }
+    },
+    {
+      "id": "L1-M3",
+      "line": "L1",
+      "kind": "deburr",
+      "name": { "en": "Deburring cell", "pl": "Gratowanie" }
+    },
+    {
+      "id": "L1-M4",
+      "line": "L1",
+      "kind": "washer",
+      "name": { "en": "Parts washer", "pl": "Myjka części" }
+    },
+    {
+      "id": "L2-M1",
+      "line": "L2",
+      "kind": "press",
+      "name": { "en": "Hydraulic press", "pl": "Prasa hydrauliczna" }
+    },
+    {
+      "id": "L2-M2",
+      "line": "L2",
+      "kind": "robot",
+      "name": { "en": "Robotic welding cell", "pl": "Zrobotyzowane gniazdo spawalnicze" }
+    },
+    {
+      "id": "L2-M3",
+      "line": "L2",
+      "kind": "assembly",
+      "name": { "en": "Screwing station", "pl": "Stanowisko skręcania" }
+    },
+    {
+      "id": "L2-M4",
+      "line": "L2",
+      "kind": "tester",
+      "name": { "en": "Leak tester", "pl": "Tester szczelności" }
+    },
+    {
+      "id": "L3-M1",
+      "line": "L3",
+      "kind": "booth",
+      "name": { "en": "Powder coating booth", "pl": "Kabina lakiernicza" }
+    },
+    {
+      "id": "L3-M2",
+      "line": "L3",
+      "kind": "oven",
+      "name": { "en": "Curing oven", "pl": "Piec utwardzający" }
+    },
+    {
+      "id": "L3-M3",
+      "line": "L3",
+      "kind": "vision",
+      "name": { "en": "Vision inspection", "pl": "Kontrola wizyjna" }
+    },
+    {
+      "id": "L3-M4",
+      "line": "L3",
+      "kind": "packer",
+      "name": { "en": "Packing machine", "pl": "Pakowarka" }
+    }
+  ]
+}

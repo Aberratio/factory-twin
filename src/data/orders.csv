@@ -1,0 +1,8 @@
+id,product,customer,quantity,completed,line_id,due,status
+ZL-2035,Housing HS-12,C-011,600,600,L3,2026-10-20T16:00,done
+ZL-2038,Shaft SH-45,C-017,400,260,L1,2026-10-21T22:00,in_progress
+ZL-2041,Hinge bracket HB-200,C-023,1200,780,L2,2026-10-22T14:00,in_progress
+ZL-2043,Cover plate CP-5,C-008,900,100,L3,2026-10-21T18:00,in_progress
+ZL-2044,Frame panel FP-10,C-031,300,220,L3,2026-10-23T10:00,in_progress
+ZL-2047,Hinge bracket HB-210,C-023,800,0,L2,2026-10-24T10:00,queued
+ZL-2050,Flange FL-80,C-017,500,0,L1,2026-10-25T14:00,queued
