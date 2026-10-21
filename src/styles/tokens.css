@@ -1,11 +1,56 @@
-/* Design tokens: the single place for colours, fonts and spacing (scene included). */
+/*
+ * Design tokens: the ONLY place for colours, fonts, sizes and spacing.
+ * The 3D scene reads its colours from here too (src/scene/tokens.ts), so swapping this
+ * file for the kokot.it brand tokens restyles the whole demo.
+ */
 :root {
+  /* Base palette (temporary, until the kokot.it brand tokens land) */
   --color-bg: #0b0f14;
   --color-surface: #121821;
+  --color-surface-2: #18202b;
+  --color-border: #243041;
   --color-text: #e6edf3;
   --color-text-muted: #9aa7b4;
   --color-accent: #5eead4;
   --color-accent-2: #f59e0b;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --color-danger: #f87171;
+  --color-on-accent: #04201b;
+
+  /* Machine status */
+  --status-running: var(--color-accent);
+  --status-down: var(--color-danger);
+  --status-quality: var(--color-accent-2);
+
+  /* 3D scene */
+  --scene-bg: var(--color-bg);
+  --scene-floor: #0f151d;
+  --scene-lane: #16202b;
+  --scene-grid: #1b2532;
+  --scene-machine: #4d5d70;
+  --scene-machine-detail: #7a8a9c;
+  --scene-conveyor: #2a3543;
+  --scene-highlight: var(--color-accent);
+
+  /* Typography (loaded from Google Fonts in index.html) */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --text-3xs: 0.5625rem;
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --leading: 1.5;
+
+  /* Spacing, radius, layout */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --chat-width: 380px;
+  --shadow: 0 8px 24px rgb(0 0 0 / 0.35);
 }

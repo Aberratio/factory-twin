@@ -3,10 +3,58 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="3D digital twin of a production hall with an AI shift assistant. Fictional data."
+    />
     <title>Factory Twin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+    />
   </head>
   <body>
-    <div id="app"></div>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-title">Factory Twin</span>
+          <span class="brand-sub" id="brand-sub"></span>
+        </div>
+        <span class="badge" id="fictional-badge"></span>
+        <span class="topbar-spacer"></span>
+        <span class="badge badge--mode" id="mode-badge"></span>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button type="button" data-lang="en">EN</button>
+          <button type="button" data-lang="pl">PL</button>
+        </div>
+      </header>
+
+      <main class="stage">
+        <div class="scene" id="scene" role="img"></div>
+        <div class="hud" id="hud"></div>
+        <section class="machine-card" id="machine-card" hidden aria-live="polite"></section>
+      </main>
+
+      <aside class="chat" aria-labelledby="chat-title">
+        <div class="chat-head">
+          <h2 id="chat-title"></h2>
+          <p id="chat-intro"></p>
+        </div>
+        <div class="scenarios" id="scenarios"></div>
+        <div class="log" id="log"></div>
+        <form class="composer" id="composer" hidden>
+          <label class="visually-hidden" for="question">Question</label>
+          <input id="question" name="question" autocomplete="off" maxlength="1000" />
+          <button type="submit"></button>
+        </form>
+        <p class="composer-note" id="composer-note" hidden></p>
+      </aside>
+
+      <footer class="footer" id="footer"></footer>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
