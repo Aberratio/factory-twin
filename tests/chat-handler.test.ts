@@ -70,6 +70,12 @@ describe('POST /api/chat', () => {
     expect(res.status).toBe(403);
   });
 
+  it('accepts a request without an Origin header (curl, scripts on this machine)', async () => {
+    // Browsers always send Origin on a cross-site POST, so the gate above still holds for pages.
+    const url = await start(ok);
+    expect((await post(url, JSON.stringify({ question: 'x' }))).status).toBe(200);
+  });
+
   it('accepts the local page origin', async () => {
     const url = await start(ok);
     const res = await post(url, JSON.stringify({ question: 'x' }), {

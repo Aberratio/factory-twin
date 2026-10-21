@@ -17,11 +17,13 @@ describe('recorded scenarios', () => {
     for (const other of ids.slice(1)) expect(other).toEqual(ids[0]);
   });
 
-  it('runs the same tool calls in every language', () => {
+  // Scripted recordings share one tool plan across languages by construction; a live capture
+  // (`npm run record`) may legitimately take a different path in each language.
+  it('runs the same tool calls in every language (scripted recordings)', () => {
     const calls = (lang: (typeof LANGS)[number]) =>
-      listRecordings(lang).map((r) =>
-        r.steps.flatMap((s) => (s.type === 'tool_call' ? [[s.name, s.input]] : [])),
-      );
+      listRecordings(lang)
+        .filter((r) => r.source === 'scripted')
+        .map((r) => r.steps.flatMap((s) => (s.type === 'tool_call' ? [[s.name, s.input]] : [])));
     for (const lang of LANGS.slice(1)) expect(calls(lang)).toEqual(calls('en'));
   });
 
@@ -47,7 +49,8 @@ describe('recorded scenarios', () => {
 
           it('moves the scene and names every highlighted machine in the answer', () => {
             const actions = toSceneActions(ds, rec.steps);
-            expect(actions.length).toBeGreaterThan(0);
+            // a live capture without a scene action is allowed (record-live.ts warns about it)
+            if (rec.source === 'scripted') expect(actions.length).toBeGreaterThan(0);
             const answer = rec.steps.flatMap((s) => (s.type === 'text' ? [s.text] : [])).join('\n');
             expect(answer.trim().length).toBeGreaterThan(0);
             for (const a of actions) {

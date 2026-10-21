@@ -152,8 +152,8 @@ input {
   font-weight: 600;
 }
 .dot {
-  width: 0.6rem;
-  height: 0.6rem;
+  width: var(--dot-size);
+  height: var(--dot-size);
   border-radius: 50%;
   flex: none;
 }
@@ -223,7 +223,7 @@ input {
   position: absolute;
   left: var(--space-3);
   bottom: var(--space-3);
-  width: min(320px, calc(100% - 2 * var(--space-3)));
+  width: min(var(--card-width), calc(100% - 2 * var(--space-3)));
   padding: var(--space-3) var(--space-4);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -298,7 +298,7 @@ input {
 .scenario {
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: var(--space-1) var(--space-3);
   font-size: var(--text-sm);
   cursor: pointer;
@@ -491,7 +491,7 @@ input {
   }
   .log {
     overflow: visible;
-    min-height: 12rem;
+    min-height: var(--log-min-height);
   }
   .label-line,
   .label-machine .label-name,

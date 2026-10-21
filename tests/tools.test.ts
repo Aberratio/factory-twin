@@ -378,6 +378,20 @@ describe('validators enforce every limit the schemas advertise', () => {
     expect(r.ok).toBe(false);
   });
 
+  const accept: [string, string, unknown][] = [];
+  for (const t of TOOL_DEFINITIONS) {
+    for (const [key, raw] of Object.entries(t.input_schema.properties)) {
+      const p = raw as Prop;
+      for (const v of p.enum ?? []) accept.push([t.name, key, v]);
+      if (p.type === 'integer' && p.minimum !== undefined) accept.push([t.name, key, p.minimum]);
+      if (p.type === 'integer' && p.maximum !== undefined) accept.push([t.name, key, p.maximum]);
+    }
+  }
+
+  it.each(accept)('%s accepts %s = %j (schema boundary or enum value)', (tool, key, value) => {
+    expect(run(tool, { ...(valid[tool] ?? {}), [key]: value }).ok).toBe(true);
+  });
+
   it('accepts the boundary values themselves', () => {
     expect(run('get_downtime', { days: 1 }).ok).toBe(true);
     expect(run('get_downtime', { days: 7 }).ok).toBe(true);

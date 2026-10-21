@@ -13,11 +13,14 @@ import { createClient } from '../server/live-client';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const configFile = join(root, 'vite.config.ts');
-const CANARY = 'sk-ant-canary-0123456789abcdef';
+// assembled at runtime so secret scanners do not mistake the test value for a key
+const CANARY = ['canary', 'not', 'a', 'key', '7f3a91'].join('-');
 
 let vite: ViteDevServer | undefined;
 let http: Server | undefined;
 const savedKey = process.env.ANTHROPIC_API_KEY;
+// never let a developer's real .env reach these tests (a live test would make a billed call)
+process.env.FACTORY_TWIN_SKIP_DOTENV = '1';
 
 afterEach(async () => {
   await new Promise<void>((r) => (http ? http.close(() => r()) : r()));
@@ -101,6 +104,10 @@ describe('the API key never reaches the browser', () => {
         };
         walk(outDir);
         expect(files.length).toBeGreaterThan(1);
+        // base './': the page must work from any sub-path (kokot.it embeds it under one)
+        const html = readFileSync(join(outDir, 'index.html'), 'utf8');
+        expect(html).toContain('src="./assets/');
+        expect(html).not.toMatch(/(src|href)="\/assets\//);
         for (const file of files) {
           const text = readFileSync(file, 'utf8');
           expect(text.includes(CANARY), `${mode}: ${file}`).toBe(false);

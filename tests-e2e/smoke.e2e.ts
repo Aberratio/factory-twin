@@ -69,6 +69,38 @@ describe('static build, recorded mode', () => {
     await page.close();
   });
 
+  it('a user clicks a scenario, sees the machine statuses and the answer, then switches language', async () => {
+    const { page, apiCalls, errors } = await open('?lang=en&autoplay=0');
+    // statuses from the data: the welding cell is down, the mill has a quality alarm
+    await expect
+      .poll(() => page.locator('.label-machine', { hasText: 'L2-M2' }).getAttribute('data-status'))
+      .toBe('down');
+    expect(
+      await page.locator('.label-machine', { hasText: 'L1-M2' }).getAttribute('data-status'),
+    ).toBe('quality_alarm');
+    expect(await page.locator('.label-machine[data-status="running"]').count()).toBe(10);
+
+    await page.getByRole('button', { name: 'Quality alarm' }).click();
+    await idle(page);
+    expect(
+      await page.getByRole('button', { name: 'Quality alarm' }).getAttribute('aria-pressed'),
+    ).toBe('true');
+    expect(await page.locator('.msg--agent').innerText()).toContain('8 of 200 parts');
+    expect(await page.locator('.label-machine.is-highlighted').allInnerTexts()).toEqual([
+      expect.stringContaining('L1-M2'),
+    ]);
+
+    await page.getByRole('button', { name: 'PL', exact: true }).click();
+    expect(await page.locator('html').getAttribute('lang')).toBe('pl');
+    expect(await page.getByRole('button', { name: 'Alarm jakości' }).isVisible()).toBe(true);
+    expect(await page.locator('.msg').count()).toBe(0); // the English answer is gone
+    expect(await page.locator('.label-machine.is-highlighted').count()).toBe(0); // and so is its highlight
+    expect(page.url()).toContain('lang=pl');
+    expect(apiCalls).toEqual([]);
+    expect(errors).toEqual([]);
+    await page.close();
+  });
+
   it('hides the header and footer in embed mode', async () => {
     const { page } = await open('?embed=1&autoplay=0');
     await page.locator('#scene canvas').waitFor();
