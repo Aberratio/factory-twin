@@ -151,10 +151,11 @@ for the kokot.it brand tokens restyles everything.
 ## Quality checks
 
 ```bash
-npm test          # Vitest
+npm test          # Vitest (unit, DOM and HTTP-level tests)
 npm run lint      # ESLint + Prettier
 npm run typecheck
 npm run build
+npm run test:e2e  # builds, then browser smoke tests in headless Chromium (Playwright)
 ```
 
 The tests cover:
@@ -169,6 +170,13 @@ The tests cover:
   highlighted machine is named in the answer.
 - **Live loop** (against a fake SDK client): tool results returned in one message, `is_error` on
   bad input, refusal handling, round cap, request parameters.
+- **`POST /api/chat`** on a real local HTTP server: 405, cross-origin 403, 415, 413 over 64 KiB,
+  400, 503 without a key, 429/502 error mapping, no internal error text leaked.
+- **Chat panel** (happy-dom): a live answer that arrives after the user switched to a recording
+  is aborted and dropped; a malformed live answer never reaches the scene.
+- **Browser smoke** (`test:e2e`): the static build plays a scenario without any `/api` request,
+  embed mode, the 1.75 DPR cap, the render loop pausing in a hidden tab, and reduced motion
+  playing the same answer with no delays.
 
 ## Limitations
 

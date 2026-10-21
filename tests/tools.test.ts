@@ -3,7 +3,7 @@ import { TOOL_DEFINITIONS, executeTool } from '../src/agent/tools';
 import { demoDataset } from './helpers';
 
 // Every expected figure below was worked out by hand from src/data/*.csv,
-// with the plant snapshot at 2026-10-21T10:00 (see docs/data.md).
+// with the plant snapshot at 2026-10-21T10:00 (src/data/plant.json).
 const ds = demoDataset();
 const run = (name: string, input: unknown = {}) => executeTool(ds, name, input);
 
@@ -245,8 +245,8 @@ describe('get_orders', () => {
     expect(orders[0]?.hours_needed_incl_queue).toBe(20.3);
   });
 
-  it('flags capacity pressure above 80% load even when the line is healthy', () => {
-    // pin for the at-risk load factor: ZL-2044 needs 22 h of 48 h (46%), so it stays on track
+  it('keeps a healthy line under 80% load on track (ZL-2044: 22 h of 48 h)', () => {
+    // pin: the at-risk load-factor arm itself is tested in rules.test.ts
     const { orders } = ok<Orders>('get_orders', { order_id: 'ZL-2044' });
     expect(orders[0]).toMatchObject({ hours_needed_incl_queue: 22, risk: 'on_track' });
   });
@@ -316,9 +316,21 @@ describe('scene tools', () => {
 });
 
 describe('determinism', () => {
-  it('returns identical results on repeated calls', () => {
+  it('returns identical results on repeated calls, for every tool with valid input', () => {
+    const inputs: Record<string, unknown> = {
+      highlight_machines: { machine_ids: ['L2-M2'], tone: 'alert' },
+      focus_camera: { target: 'L2' },
+    };
     for (const t of TOOL_DEFINITIONS) {
-      expect(JSON.stringify(run(t.name, {}))).toBe(JSON.stringify(run(t.name, {})));
+      const first = run(t.name, inputs[t.name] ?? {});
+      expect(first.ok, t.name).toBe(true);
+      expect(JSON.stringify(run(t.name, inputs[t.name] ?? {}))).toBe(JSON.stringify(first));
+    }
+  });
+
+  it('does not treat Object prototype keys as tools', () => {
+    for (const name of ['constructor', 'hasOwnProperty', 'toString', '__proto__']) {
+      expect(run(name)).toEqual({ ok: false, error: `Unknown tool: ${name}` });
     }
   });
 });
