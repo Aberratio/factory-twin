@@ -12,7 +12,7 @@ const ds = demoDataset();
 let server: Server | undefined;
 
 afterEach(async () => {
-  await new Promise<void>((resolve) => (server ? server.close(() => resolve()) : resolve()));
+  await stop();
   server = undefined;
 });
 
@@ -34,7 +34,16 @@ async function start(getClient: () => MessagesClient): Promise<string> {
   return `http://127.0.0.1:${(server?.address() as AddressInfo).port}/`;
 }
 
-const json = { 'content-type': 'application/json' };
+/** Closes the server and any lingering keep-alive sockets (Windows workers crash on leftovers). */
+async function stop() {
+  if (!server) return;
+  const s = server;
+  server = undefined;
+  s.closeAllConnections();
+  await new Promise<void>((resolve) => s.close(() => resolve()));
+}
+
+const json = { 'content-type': 'application/json', connection: 'close' };
 const ok = () => client(async () => answer('L2-M2 is down.'));
 
 async function post(url: string, body: string, headers: Record<string, string> = json) {
@@ -120,7 +129,7 @@ describe('POST /api/chat', () => {
     } as unknown as Anthropic.Beta.BetaMessage;
     let url = await start(() => client(async () => refusal));
     expect((await post(url, JSON.stringify({ question: 'x' }))).status).toBe(502);
-    await new Promise<void>((r) => server?.close(() => r()));
+    await stop();
 
     url = await start(() =>
       client(async () => {
@@ -131,7 +140,7 @@ describe('POST /api/chat', () => {
       status: 429,
       body: { error: 'Rate limited; try again shortly.' },
     });
-    await new Promise<void>((r) => server?.close(() => r()));
+    await stop();
 
     url = await start(() =>
       client(async () => {

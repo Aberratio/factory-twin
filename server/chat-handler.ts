@@ -86,19 +86,23 @@ function describeError(err: unknown): [number, string] {
   return [500, 'Internal error'];
 }
 
+/**
+ * Reads the body up to MAX_BODY. An oversize body is drained (not buffered) and rejected only
+ * once it has fully arrived, so the 413 never races the client's upload into a socket reset.
+ */
 function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
     let size = 0;
+    let tooLarge = false;
     const chunks: Buffer[] = [];
     req.on('data', (c: Buffer) => {
       size += c.length;
-      if (size > MAX_BODY) {
-        req.removeAllListeners('data');
-        req.resume();
-        reject(new Error('too large'));
-      } else chunks.push(c);
+      if (size > MAX_BODY) tooLarge = true;
+      if (!tooLarge) chunks.push(c);
     });
-    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('end', () =>
+      tooLarge ? reject(new Error('too large')) : resolve(Buffer.concat(chunks).toString('utf8')),
+    );
     req.on('error', reject);
   });
 }
