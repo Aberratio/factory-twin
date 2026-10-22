@@ -7,6 +7,9 @@ import { isLang } from './domain/langs';
 import type { Lang, MachineStatus } from './domain/types';
 import { listRecordings } from './recordings';
 import { FactoryScene } from './scene/factory-scene';
+import { FallbackScene } from './scene/fallback-scene';
+import { readMotionScale } from './scene/tokens';
+import { isWebGLAvailable, type SceneView } from './scene/view';
 import { Chat } from './ui/chat';
 import { detectLang, statusLabel, strings } from './ui/i18n';
 
@@ -14,7 +17,8 @@ const LIVE = import.meta.env.MODE === 'live';
 const params = new URLSearchParams(location.search);
 const embed = params.get('embed') === '1';
 const autoplay = params.get('autoplay') !== '0';
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// --motion-scale is the brand's reduced-motion switch (0 under prefers-reduced-motion)
+const reducedMotion = readMotionScale() === 0;
 
 const $ = <T extends HTMLElement>(id: string) => {
   const el = document.getElementById(id);
@@ -27,11 +31,22 @@ if (embed) document.documentElement.classList.add('embed');
 const ds = loadDataset();
 let lang: Lang = detectLang(params, navigator.language);
 
-const scene = new FactoryScene($('scene'), ds, {
-  reducedMotion,
-  lang,
-  onSelect: (id) => showMachine(id),
-});
+function createScene(): SceneView {
+  const onSelect = (id: string | null) => showMachine(id);
+  const fallback = () =>
+    new FallbackScene($('scene'), ds, { lang, onSelect, message: (l) => strings(l).noWebgl });
+  if (!isWebGLAvailable() || params.get('webgl') === '0') return fallback();
+  try {
+    return new FactoryScene($('scene'), ds, { reducedMotion, lang, onSelect });
+  } catch (err) {
+    // e.g. a context that cannot be created after all: keep the page and the chat working
+    console.warn('3D view unavailable, using the board view', err);
+    $('scene').replaceChildren();
+    return fallback();
+  }
+}
+
+const scene = createScene();
 
 let chat: Chat | undefined;
 let autoplayTimer: number | undefined;

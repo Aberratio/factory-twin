@@ -168,3 +168,30 @@ describe('static build, recorded mode', () => {
     expect(reducedText).toBe(normalText);
   });
 });
+
+describe('browser without WebGL (e.g. an iframe with 3D disabled)', () => {
+  it('falls back to the board view; the assistant, highlights and machine card still work', async () => {
+    const noGl = await chromium.launch({ args: ['--disable-webgl', '--disable-3d-apis'] });
+    try {
+      const page = await noGl.newPage({ viewport: { width: 1280, height: 800 } });
+      const errors: string[] = [];
+      page.on('pageerror', (e) => errors.push(e.message));
+      await page.goto(`${base}?lang=en&scenario=downtime-week`);
+      await page.waitForFunction(() => document.documentElement.dataset.chat === 'busy');
+      await idle(page);
+      expect(await page.locator('#scene canvas').count()).toBe(0);
+      expect(await page.locator('.scene-fallback-note').innerText()).toContain('WebGL');
+      expect(await page.locator('.msg--agent').innerText()).toContain('290 of 500 minutes');
+      expect(
+        await page
+          .locator('.fallback-machine.is-highlighted')
+          .evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.id)),
+      ).toEqual(['L2-M2']);
+      await page.locator('.fallback-machine[data-id="L1-M2"]').click();
+      expect(await page.locator('#machine-card h2').innerText()).toContain('L1-M2');
+      expect(errors).toEqual([]);
+    } finally {
+      await noGl.close();
+    }
+  });
+});
