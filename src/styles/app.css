@@ -132,8 +132,16 @@ input {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* labels never slide under the KPI chips (--hud-bottom is measured in main.ts) */
-  clip-path: inset(var(--hud-bottom, 0) 0 0 0);
+  /* labels never slide under the KPI chips, but stay visible beside them
+     (--hud-bottom and --hud-right are measured in main.ts) */
+  clip-path: polygon(
+    var(--hud-right, 100%) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 var(--hud-bottom, 0),
+    var(--hud-right, 100%) var(--hud-bottom, 0)
+  );
 }
 .is-close .label-line {
   visibility: hidden;
