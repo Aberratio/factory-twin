@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { toSceneActions } from '../src/agent/actions';
 import { executeTool } from '../src/agent/tools';
 import type { TranscriptStep } from '../src/agent/transcript';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
-const ds = demoDataset();
+const ds = sampleDataset();
 
 /** A tool step whose result really comes from the tool, as in a recording or a live turn. */
 function call(name: string, input: Record<string, unknown>, id = `call_${name}`): TranscriptStep {

@@ -3,7 +3,7 @@ import { parseRecording, type Recording } from '../agent/transcript';
 
 export { LANGS } from '../domain/langs';
 
-// Bundled at build time: the recorded demo needs no server and no network.
+// Bundled at build time: recorded runs need no server and no network.
 const files = import.meta.glob<unknown>('./*/*.json', { eager: true, import: 'default' });
 
 const all: Recording[] = Object.entries(files)

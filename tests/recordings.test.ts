@@ -5,9 +5,9 @@ import { toSceneActions } from '../src/agent/actions';
 import { buildTimeline } from '../src/agent/player';
 import { parseRecording, type Recording } from '../src/agent/transcript';
 import { buildScriptedRecording, loadScenarios } from '../server/recordings';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
-const ds = demoDataset();
+const ds = sampleDataset();
 
 describe('recorded scenarios', () => {
   it('ships 3 to 5 scenarios in every language, with the same ids in the same order', () => {

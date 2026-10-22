@@ -11,7 +11,7 @@ export interface RawDataset {
 
 const ORDER_STATUSES: readonly string[] = ['queued', 'in_progress', 'done'];
 
-/** Parses and cross-checks the demo data. Throws on anything inconsistent: bad data must not reach the agent. */
+/** Parses and cross-checks the sample data. Throws on anything inconsistent: bad data must not reach the agent. */
 export function buildDataset(raw: RawDataset): Dataset {
   const { plant } = raw;
   const machineIds = new Set(plant.machines.map((m) => m.id));

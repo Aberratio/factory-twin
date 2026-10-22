@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { parseCsv } from '../src/domain/csv';
 import { formatLocal, parseLocal } from '../src/domain/time';
 import { buildDataset } from '../src/domain/dataset';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
 describe('parseCsv', () => {
   it('reads a header row into keyed records and keeps empty fields', () => {
@@ -39,8 +39,8 @@ describe('plant-local time', () => {
 });
 
 describe('buildDataset', () => {
-  it('loads the demo plant: 3 lines, 12 machines, 13 downtime events, 13 checks, 7 orders', () => {
-    const ds = demoDataset();
+  it('loads the sample plant: 3 lines, 12 machines, 13 downtime events, 13 checks, 7 orders', () => {
+    const ds = sampleDataset();
     expect(ds.lines).toHaveLength(3);
     expect(ds.machines).toHaveLength(12);
     expect(ds.downtime).toHaveLength(13);
@@ -49,12 +49,12 @@ describe('buildDataset', () => {
   });
 
   it('marks an event without an end time as ongoing', () => {
-    const open = demoDataset().downtime.filter((e) => e.end === null);
+    const open = sampleDataset().downtime.filter((e) => e.end === null);
     expect(open.map((e) => e.id)).toEqual(['DT-113']);
   });
 
   it('refuses data that references a machine the plant does not have', () => {
-    const ds = demoDataset();
+    const ds = sampleDataset();
     expect(() =>
       buildDataset({
         plant: ds.plant,

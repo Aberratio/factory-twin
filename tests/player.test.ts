@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { buildTimeline, TIMING } from '../src/agent/player';
 import { executeTool } from '../src/agent/tools';
 import type { Transcript } from '../src/agent/transcript';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
-const ds = demoDataset();
+const ds = sampleDataset();
 
 const transcript: Transcript = {
   question: 'Which machine lost the most time this week?',

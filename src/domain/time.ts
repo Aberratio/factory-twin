@@ -1,5 +1,5 @@
 // Plant-local wall-clock time as whole minutes. Deliberately free of time zones and DST:
-// the demo must compute the same numbers on every machine and in every browser.
+// the app must compute the same numbers on every machine and in every browser.
 
 const PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/;
 
