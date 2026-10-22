@@ -1,7 +1,7 @@
 {
   "name": "factory-twin",
   "version": "0.1.0",
-  "description": "3D digital twin of a production hall with an AI agent (recorded and live modes).",
+  "description": "3D digital twin of a production hall with a Claude-powered shift assistant: recorded runs or live Claude API.",
   "scripts": {
     "dev": "vite --configLoader runner",
     "dev:live": "vite --mode live",
@@ -15,9 +15,10 @@
     "recordings:build": "tsx scripts/build-recordings.ts",
     "record": "tsx scripts/record-live.ts",
     "screenshots": "tsx scripts/screenshots.ts",
-    "test:e2e": "npm run build && vitest run --config vitest.e2e.config.ts --configLoader runner"
+    "check:wording": "tsx scripts/check-wording.ts",
+    "test:e2e": "npm run build && npm run check:wording && vitest run --config vitest.e2e.config.ts --configLoader runner"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "three": "^0.186.1"

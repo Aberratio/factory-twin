@@ -33,6 +33,8 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+      - name: Wording check (built site and docs)
+        run: npm run check:wording
       - name: Install Chromium for browser tests
         run: npx playwright install --with-deps chromium
       - name: Browser smoke tests
