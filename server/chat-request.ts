@@ -1,3 +1,4 @@
+import { CHAT_LIMITS } from '../src/agent/limits';
 import { isLang } from '../src/domain/langs';
 import type { Lang } from '../src/domain/types';
 import type { HistoryTurn } from './agent';
@@ -8,9 +9,9 @@ export interface ChatRequest {
   history: HistoryTurn[];
 }
 
-const MAX_QUESTION = 1000;
-const MAX_HISTORY = 10;
-const MAX_ANSWER = 4000;
+const MAX_QUESTION = CHAT_LIMITS.question;
+const MAX_HISTORY = CHAT_LIMITS.historyTurns;
+const MAX_ANSWER = CHAT_LIMITS.answer;
 
 /** Validates the body of POST /api/chat. Everything from the browser is untrusted. */
 export function parseChatRequest(
@@ -38,6 +39,9 @@ export function parseChatRequest(
       h === null ||
       typeof h.question !== 'string' ||
       typeof h.answer !== 'string' ||
+      // an empty assistant turn is rejected by the Messages API and would break every later turn
+      !h.question.trim() ||
+      !h.answer.trim() ||
       h.question.length > MAX_QUESTION ||
       h.answer.length > MAX_ANSWER
     ) {

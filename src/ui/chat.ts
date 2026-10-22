@@ -2,7 +2,8 @@ import type { SceneAction } from '../agent/actions';
 import { buildTimeline, type TimelineEvent } from '../agent/player';
 import { parseTranscript, type Recording, type Transcript } from '../agent/transcript';
 import type { Dataset, Lang } from '../domain/types';
-import type { FactoryScene } from '../scene/factory-scene';
+import type { SceneView } from '../scene/view';
+import { CHAT_LIMITS } from '../agent/limits';
 import { renderAnswer } from './format';
 import { strings } from './i18n';
 import { revealText, runTimeline } from './runner';
@@ -14,7 +15,7 @@ export interface LiveTurnResponse {
 
 export interface ChatOptions {
   ds: Dataset;
-  scene: FactoryScene;
+  scene: SceneView;
   lang: Lang;
   live: boolean;
   reducedMotion: boolean;
@@ -77,7 +78,11 @@ export class Chat {
       const res = await fetch('./api/chat', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ question, lang: this.o.lang, history: this.history.slice(-10) }),
+        body: JSON.stringify({
+          question,
+          lang: this.o.lang,
+          history: this.history.slice(-CHAT_LIMITS.historyTurns),
+        }),
         signal: request.signal,
       });
       const json = (await res.json()) as LiveTurnResponse | { error: string };
@@ -147,10 +152,17 @@ export class Chat {
             this.scrollDown();
           };
           this.cancel.push(revealText(out, e.text, e.revealMs, finish));
-          this.history.push({ question: transcript.question, answer: e.text });
+          // what goes back to the server next time must pass its validation (CHAT_LIMITS)
+          if (e.text.trim()) {
+            this.history.push({
+              question: transcript.question.slice(0, CHAT_LIMITS.question),
+              answer: e.text.slice(0, CHAT_LIMITS.answer),
+            });
+          }
           break;
         }
         case 'done':
+          thinking?.remove();
           this.setBusy(false);
           break;
       }

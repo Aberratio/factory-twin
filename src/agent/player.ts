@@ -48,9 +48,12 @@ export function buildTimeline(
     .join('\n\n');
   const words = text.split(/\s+/).filter(Boolean).length;
   const revealMs = beat(Math.min(words * TIMING.msPerWord, TIMING.maxRevealMs));
-  t += beat(TIMING.answerDelay);
-  events.push({ at: t, kind: 'answer', text, revealMs });
-  t += revealMs;
+  // A transcript without text (only possible from a malformed live turn) shows no answer.
+  if (text) {
+    t += beat(TIMING.answerDelay);
+    events.push({ at: t, kind: 'answer', text, revealMs });
+    t += revealMs;
+  }
   events.push({ at: t, kind: 'done' });
   return events;
 }

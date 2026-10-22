@@ -2,8 +2,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SceneAction } from '../src/agent/actions';
 import { listRecordings } from '../src/recordings';
-import type { FactoryScene } from '../src/scene/factory-scene';
+import type { SceneView } from '../src/scene/view';
 import { Chat } from '../src/ui/chat';
+import { parseChatRequest } from '../server/chat-request';
 import { loadDataset } from '../src/data/browser';
 
 // The chat panel against a fake scene and a fake fetch: what reaches the scene, and when.
@@ -18,7 +19,7 @@ function fakeScene() {
     focus: vi.fn(),
     select: vi.fn(),
   };
-  return { scene: scene as unknown as FactoryScene, applied, reset: scene.reset };
+  return { scene: scene as unknown as SceneView, applied, reset: scene.reset };
 }
 
 function mount(live: boolean) {
@@ -152,6 +153,52 @@ describe('Chat', () => {
     input.value = 'Anything?';
     document.getElementById('composer')?.dispatchEvent(new Event('submit', { cancelable: true }));
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('never puts an empty answer into the history it sends next time (F1 regression)', async () => {
+    const bodies: { history: { question: string; answer: string }[] }[] = [];
+    const replies = [
+      { model: 'm', transcript: { question: 'first', steps: [liveAnswer.transcript.steps[0]] } },
+      liveAnswer,
+    ];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: string, init?: RequestInit) => {
+        bodies.push(JSON.parse(String(init?.body)) as (typeof bodies)[number]);
+        return new Response(JSON.stringify(replies.shift()), { status: 200 });
+      }),
+    );
+    const { chat } = mount(true);
+    await chat.askLive('first');
+    await vi.runAllTimersAsync();
+    expect(document.querySelector('.thinking')).toBeNull();
+    await chat.askLive('second');
+    await vi.runAllTimersAsync();
+    expect(bodies[1]?.history).toEqual([]);
+  });
+
+  it('trims what it sends back as history to the server limits', async () => {
+    const long = 'word '.repeat(2000);
+    const bodies: { history: { question: string; answer: string }[] }[] = [];
+    const replies = [
+      { model: 'm', transcript: { question: 'q', steps: [{ type: 'text', text: long }] } },
+      liveAnswer,
+    ];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: string, init?: RequestInit) => {
+        bodies.push(JSON.parse(String(init?.body)) as (typeof bodies)[number]);
+        return new Response(JSON.stringify(replies.shift()), { status: 200 });
+      }),
+    );
+    const { chat } = mount(true);
+    await chat.askLive('q');
+    await vi.runAllTimersAsync();
+    await chat.askLive('again');
+    await vi.runAllTimersAsync();
+    const sent = bodies[1]?.history[0];
+    expect(sent?.answer.length).toBeLessThanOrEqual(4000);
+    expect(parseChatRequest(bodies[1]).ok).toBe(true);
   });
 
   it('rejects a malformed live answer instead of passing it to the scene', async () => {

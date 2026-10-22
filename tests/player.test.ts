@@ -107,6 +107,16 @@ describe('buildTimeline', () => {
     expect(now).not.toHaveBeenCalled();
   });
 
+  it('emits no answer for a transcript without text, but still finishes', () => {
+    const tl = buildTimeline(
+      ds,
+      { question: 'q', steps: transcript.steps.filter((s) => s.type === 'tool_call') },
+      { reducedMotion: false },
+    );
+    expect(tl.some((e) => e.kind === 'answer')).toBe(false);
+    expect(tl.at(-1)?.kind).toBe('done');
+  });
+
   it('joins several text blocks into one answer', () => {
     const tl = buildTimeline(
       ds,
