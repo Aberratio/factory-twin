@@ -7,7 +7,7 @@ import type { Plant } from '../src/domain/types';
 // The sample data never sits exactly on a boundary, so these pin the rules themselves.
 
 const plant: Plant = {
-  company: { name: 'Test Works', site: 'T', fictional: true },
+  company: { name: 'Test Works', site: { en: 'T', pl: 'T' }, fictional: true },
   snapshot: '2026-01-10T12:00',
   thresholds: { qualityAlarmRejectRate: 0.03, qualityWindowHours: 8, atRiskLoadFactor: 0.8 },
   lines: [{ id: 'A', name: { en: 'A', pl: 'A' }, ratePerHour: 10 }],
