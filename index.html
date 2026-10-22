@@ -20,7 +20,7 @@
         </div>
         <span class="topbar-spacer"></span>
         <span class="mode-label" id="mode-label"></span>
-        <div class="lang-switch" role="group" aria-label="Language">
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Language">
           <button type="button" data-lang="en">EN</button>
           <button type="button" data-lang="pl">PL</button>
         </div>
@@ -41,7 +41,7 @@
         <div class="scenarios" id="scenarios"></div>
         <div class="log" id="log"></div>
         <form class="composer" id="composer" hidden>
-          <label class="visually-hidden" for="question">Question</label>
+          <label class="visually-hidden" id="question-label" for="question">Question</label>
           <input id="question" name="question" autocomplete="off" maxlength="1000" />
           <button type="submit"></button>
         </form>

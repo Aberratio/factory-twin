@@ -48,10 +48,18 @@ function createScene(): SceneView {
 const scene = createScene();
 
 // The KPI chips sit over the hall and wrap onto more rows on narrow screens; the board view
-// (no WebGL) starts below them, so it needs their real height rather than a fixed offset.
+// (no WebGL) starts below them, so it needs their real height rather than a fixed offset. The
+// scene labels are clipped only from the box the chips actually cover (bottom and right edge),
+// so on a wide screen the labels to the right of the chips stay visible.
 const hud = $('hud');
-const syncHudOffset = () =>
-  hud.parentElement?.style.setProperty('--hud-bottom', `${hud.offsetTop + hud.offsetHeight}px`);
+function syncHudOffset(): void {
+  const stage = hud.parentElement;
+  if (!stage) return;
+  const chips = [...hud.children] as HTMLElement[];
+  const right = Math.max(0, ...chips.map((c) => c.offsetLeft + c.offsetWidth));
+  stage.style.setProperty('--hud-bottom', `${hud.offsetTop + hud.offsetHeight}px`);
+  stage.style.setProperty('--hud-right', `${hud.offsetLeft + right}px`);
+}
 if (typeof ResizeObserver === 'function') new ResizeObserver(syncHudOffset).observe(hud);
 
 let chat: Chat | undefined;
@@ -70,6 +78,8 @@ function render(): void {
   $('chat-meta').textContent = `${modeLabel} · ${t.sampleData}`;
   $('scene').setAttribute('aria-label', t.sceneLabel);
   $('chat-title').textContent = t.chatTitle;
+  $('lang-switch').setAttribute('aria-label', t.langSwitchLabel);
+  $('question-label').textContent = t.questionLabel;
   for (const b of document.querySelectorAll<HTMLButtonElement>('[data-lang]')) {
     b.setAttribute('aria-pressed', String(b.dataset.lang === lang));
   }
@@ -133,6 +143,7 @@ function renderHud(): void {
     kpi('risk', t.ordersAtRisk, o.order_risk_counts.at_risk + o.order_risk_counts.late),
     asOf,
   );
+  syncHudOffset();
 }
 
 function showMachine(id: string | null): void {
