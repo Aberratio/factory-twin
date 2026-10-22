@@ -10,6 +10,7 @@ import { FallbackScene } from './scene/fallback-scene';
 import { readMotionScale } from './scene/tokens';
 import { isWebGLAvailable, type SceneView } from './scene/view';
 import { Chat } from './ui/chat';
+import { reportHeightToParent } from './ui/embed';
 import { detectLang, statusLabel, strings } from './ui/i18n';
 
 const LIVE = import.meta.env.MODE === 'live';
@@ -221,3 +222,7 @@ if (autoplay) {
   if (first)
     autoplayTimer = window.setTimeout(() => chat?.playRecording(first), reducedMotion ? 0 : 700);
 }
+
+// Embedded (kokot.it case study): tell the parent page how tall the content is, so it can size the
+// iframe without an inner scrollbar.
+if (embed) reportHeightToParent();
