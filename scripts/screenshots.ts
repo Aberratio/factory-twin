@@ -49,6 +49,12 @@ const SHOTS: Shot[] = [
     height: 812,
   },
   {
+    file: 'mobile-overview-en.png',
+    query: '?lang=en&scenario=shift-overview',
+    width: 375,
+    height: 812,
+  },
+  {
     file: 'mobile-board-en.png',
     query: '?lang=en&webgl=0&scenario=shift-overview',
     width: 375,
