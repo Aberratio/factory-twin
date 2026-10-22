@@ -33,6 +33,8 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+      - name: Language check (English outside the Polish UI strings and sample data)
+        run: npm run check:language
       - name: Wording check (built site and docs)
         run: npm run check:wording
       - name: Install Chromium for browser tests
