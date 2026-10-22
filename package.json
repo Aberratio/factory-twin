@@ -16,6 +16,7 @@
     "record": "tsx scripts/record-live.ts",
     "screenshots": "tsx scripts/screenshots.ts",
     "check:wording": "tsx scripts/check-wording.ts",
+    "check:language": "tsx scripts/check-language.ts",
     "test:e2e": "npm run build && npm run check:wording && vitest run --config vitest.e2e.config.ts --configLoader runner"
   },
   "license": "MIT",
