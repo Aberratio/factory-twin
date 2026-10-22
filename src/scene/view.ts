@@ -13,7 +13,10 @@ export interface SceneView {
 export function isWebGLAvailable(): boolean {
   try {
     const canvas = document.createElement('canvas');
-    return Boolean(canvas.getContext('webgl2') ?? canvas.getContext('webgl'));
+    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+    // a probe context counts against the browser's limit until garbage collection: free it now
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
+    return gl !== null;
   } catch {
     return false;
   }

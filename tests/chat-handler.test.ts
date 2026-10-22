@@ -4,11 +4,11 @@ import type { AddressInfo } from 'node:net';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { MessagesClient } from '../server/agent';
 import { createChatHandler, MAX_BODY } from '../server/chat-handler';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
 // Request-level tests of POST /api/chat on a real local HTTP server, with a fake SDK client.
 
-const ds = demoDataset();
+const ds = sampleDataset();
 let server: Server | undefined;
 
 afterEach(async () => {
@@ -113,12 +113,15 @@ describe('POST /api/chat', () => {
     });
   });
 
-  it('answers 503 with a hint when no API key is configured', async () => {
+  it('answers 503 with a generic message when no API key is configured', async () => {
     const url = await start(() => {
       throw new Error('ANTHROPIC_API_KEY is not set.');
     });
     const res = await post(url, JSON.stringify({ question: 'x' }));
-    expect(res).toEqual({ status: 503, body: { error: 'ANTHROPIC_API_KEY is not set.' } });
+    expect(res).toEqual({
+      status: 503,
+      body: { error: 'Live mode is not configured: set ANTHROPIC_API_KEY on the server.' },
+    });
   });
 
   it('maps a refusal to 502, a rate limit to 429 and other API errors to 502', async () => {

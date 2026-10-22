@@ -51,7 +51,11 @@ export function createChatHandler(opts: ChatHandlerOptions) {
     try {
       client ??= opts.getClient();
     } catch (err) {
-      return send(res, 503, { error: (err as Error).message });
+      // the reason (e.g. a missing key) stays in the server log; the browser gets a fixed message
+      opts.log?.(`[live] 503: ${(err as Error).message}`);
+      return send(res, 503, {
+        error: 'Live mode is not configured: set ANTHROPIC_API_KEY on the server.',
+      });
     }
 
     try {
