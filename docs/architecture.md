@@ -71,7 +71,7 @@ plant before the scene applies it.
 
 ## Brand and colour
 
-- `src/styles/tokens.css`, `fonts.css`, the woff2 files with their OFL licences and the logo come
+- `src/styles/tokens.css`, `fonts.css`, the woff2 files with their OFL licences and the mark (`src/assets/brand/mark.svg`, the favicon) come
   unchanged from the kokot.it brand. Fonts are self-hosted, so the page makes no third-party
   requests. App-only tokens sit in a block at the end of `tokens.css`, mapped onto brand tokens.
 - Machine status uses the brand's success, danger and warning colours. What the agent points at
