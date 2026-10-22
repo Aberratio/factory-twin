@@ -4,7 +4,8 @@ import { mkdirSync } from 'node:fs';
 import { chromium, type Page } from 'playwright';
 import { preview } from 'vite';
 
-const OUT = 'docs/screenshots';
+// SCREENSHOTS_DIR captures a comparison set without touching docs/.
+const OUT = process.env.SCREENSHOTS_DIR ?? 'docs/screenshots';
 
 interface Shot {
   file: string;
@@ -17,9 +18,24 @@ interface Shot {
 }
 
 const SHOTS: Shot[] = [
-  { file: 'overview-en.png', query: '?lang=en&scenario=shift-overview', width: 1440, height: 900 },
-  { file: 'downtime-en.png', query: '?lang=en&scenario=downtime-week', width: 1440, height: 900 },
-  { file: 'quality-pl.png', query: '?lang=pl&scenario=quality-alarm', width: 1440, height: 900 },
+  {
+    file: 'desktop-overview-en.png',
+    query: '?lang=en&scenario=shift-overview',
+    width: 1440,
+    height: 900,
+  },
+  {
+    file: 'desktop-downtime-en.png',
+    query: '?lang=en&scenario=downtime-week',
+    width: 1440,
+    height: 900,
+  },
+  {
+    file: 'desktop-quality-pl.png',
+    query: '?lang=pl&scenario=quality-alarm',
+    width: 1440,
+    height: 900,
+  },
   {
     file: 'embed-order-en.png',
     query: '?embed=1&lang=en&scenario=order-zl-2041',
@@ -29,11 +45,17 @@ const SHOTS: Shot[] = [
   {
     file: 'mobile-orders-pl.png',
     query: '?lang=pl&scenario=orders-at-risk',
-    width: 390,
-    height: 844,
+    width: 375,
+    height: 812,
   },
   {
-    file: 'machine-card-en.png',
+    file: 'mobile-board-en.png',
+    query: '?lang=en&webgl=0&scenario=shift-overview',
+    width: 375,
+    height: 812,
+  },
+  {
+    file: 'desktop-machine-card-en.png',
     query: '?lang=en&autoplay=0',
     width: 1440,
     height: 900,
