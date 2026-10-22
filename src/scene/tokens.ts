@@ -17,6 +17,18 @@ export const SCENE_TOKENS = {
 
 export type SceneColors = Record<keyof typeof SCENE_TOKENS, Color>;
 
+/**
+ * The brand's motion switch: tokens.css sets --motion-scale to 0 under prefers-reduced-motion.
+ * Falls back to the media query itself when the token is missing.
+ */
+export function readMotionScale(root: Element = document.documentElement): number {
+  const value = Number.parseFloat(getComputedStyle(root).getPropertyValue('--motion-scale'));
+  if (Number.isFinite(value)) return value;
+  return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+    ? 0
+    : 1;
+}
+
 /** Scene colours come from the CSS tokens (tokens.css), never from literals in the scene code. */
 export function readSceneColors(root: Element = document.documentElement): SceneColors {
   const style = getComputedStyle(root);

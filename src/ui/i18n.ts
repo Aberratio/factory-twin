@@ -31,6 +31,8 @@ const STRINGS = {
     close: 'Close',
     askAbout: 'Ask about this machine',
     askAboutPrompt: (id: string) => `What is going on with ${id}?`,
+    noWebgl:
+      'This browser cannot show the 3D view (WebGL is off), so the hall is shown as a board. The assistant works the same.',
     sceneLabel:
       '3D view of the production hall. Drag to rotate, scroll to zoom, click a machine for details.',
     footer: 'Veldra Components is a fictional company. Demo by',
@@ -76,6 +78,8 @@ const STRINGS = {
     close: 'Zamknij',
     askAbout: 'Zapytaj o tę maszynę',
     askAboutPrompt: (id: string) => `Co się dzieje z ${id}?`,
+    noWebgl:
+      'Ta przeglądarka nie pokaże widoku 3D (WebGL jest wyłączony), więc hala jest pokazana jako tablica. Asystent działa tak samo.',
     sceneLabel:
       'Widok 3D hali produkcyjnej. Przeciągnij, aby obrócić, przewiń, aby przybliżyć, kliknij maszynę, aby zobaczyć szczegóły.',
     footer: 'Veldra Components to firma fikcyjna. Demo by',

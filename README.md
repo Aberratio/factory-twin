@@ -109,10 +109,13 @@ works from any sub-path. No server is needed.
 | `lang=en` / `lang=pl` | interface and recordings language (default: browser language, else English)                                 |
 | `scenario=<id>`       | scenario to autoplay: `shift-overview`, `downtime-week`, `order-zl-2041`, `quality-alarm`, `orders-at-risk` |
 | `autoplay=0`          | do not autoplay anything                                                                                    |
+| `webgl=0`             | show the board view used when WebGL is unavailable (for checking it)                                        |
 
 `<html data-chat="busy|idle">` reflects whether an answer is playing. The render loop pauses when
 the tab is hidden or the iframe is scrolled out of view, the pixel ratio is capped at 1.75, and
-`prefers-reduced-motion` turns off camera flights, animation and text reveal.
+`prefers-reduced-motion` (read through the brand's `--motion-scale` token) turns off camera
+flights, animation and text reveal. Without WebGL the hall is shown as an HTML board with the same
+statuses and highlights, so the assistant keeps working in any iframe.
 
 Everything ships in the bundle, including the fonts (self-hosted Schibsted Grotesk and JetBrains
 Mono, SIL OFL 1.1). The page makes no third-party requests.
