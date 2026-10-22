@@ -26,7 +26,14 @@ import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRe
 import type { FocusTarget, SceneAction } from '../agent/actions';
 import { machineStates } from '../domain/queries';
 import type { Dataset, Lang, MachineStatus } from '../domain/types';
-import { cameraPose, lineZ, machinePosition, OVERVIEW, type CameraPose } from './layout';
+import {
+  cameraPose,
+  isCloseView,
+  lineZ,
+  machinePosition,
+  OVERVIEW,
+  type CameraPose,
+} from './layout';
 import { buildMachine } from './machines';
 import { readSceneColors, type SceneColors } from './tokens';
 
@@ -145,8 +152,6 @@ export class FactoryScene {
 
   focus(target: FocusTarget): void {
     const to = cameraPose(this.ds, target);
-    // close up, the far line labels crowd the edges of the view; they return with the overview
-    this.container.classList.toggle('is-close', target.kind !== 'overview');
     if (this.opts.reducedMotion) {
       this.fly = null;
       this.setPose(to);
@@ -438,6 +443,7 @@ export class FactoryScene {
       this.dirty = true;
     }
     if (this.dirty) {
+      this.syncCloseView();
       this.renderer.render(this.scene, this.camera);
       this.labels.render(this.scene, this.camera);
       this.dirty = false;
@@ -480,6 +486,20 @@ export class FactoryScene {
     );
     this.dirty = true;
     if (k >= 1) this.fly = null;
+  }
+
+  /**
+   * Hides the far line labels while the camera is close, whether it got there by a focus action
+   * or by the user zooming, and shows them again once it is far enough out.
+   */
+  private syncCloseView(): void {
+    const t = this.controls.target;
+    const p = this.camera.position;
+    const close = isCloseView({
+      position: { x: p.x, y: p.y, z: p.z },
+      target: { x: t.x, y: t.y, z: t.z },
+    });
+    this.container.classList.toggle('is-close', close);
   }
 
   private setPose(pose: CameraPose): void {
