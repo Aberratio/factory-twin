@@ -20,6 +20,8 @@ const STRINGS = {
       'Ask about orders, downtime or quality. Claude answers with live tool calls on the plant data.',
     placeholder: 'e.g. Why is line 2 stopped?',
     send: 'Ask',
+    questionLabel: 'Question',
+    langSwitchLabel: 'Language',
     thinking: 'Checking the plant data',
     liveNote: 'For your own questions, run it locally with a Claude API key:',
     error: 'Something went wrong',
@@ -66,6 +68,8 @@ const STRINGS = {
       'Zapytaj o zlecenia, przestoje albo jakość. Claude odpowiada, wywołując narzędzia na danych hali.',
     placeholder: 'np. Dlaczego stoi linia 2?',
     send: 'Zapytaj',
+    questionLabel: 'Pytanie',
+    langSwitchLabel: 'Język',
     thinking: 'Sprawdzam dane hali',
     liveNote: 'Własne pytania: uruchom lokalnie z kluczem Claude API:',
     error: 'Coś poszło nie tak',
@@ -97,6 +101,9 @@ const STRINGS = {
 } satisfies Record<Lang, unknown>;
 
 export type Strings = (typeof STRINGS)['en'];
+
+/** Both dictionaries, for the key-parity test. */
+export const DICTIONARIES: Readonly<Record<Lang, Strings>> = STRINGS;
 
 export function strings(lang: Lang): Strings {
   return STRINGS[lang];
