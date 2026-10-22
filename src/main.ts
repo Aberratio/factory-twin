@@ -1,6 +1,5 @@
 import './styles/tokens.css';
 import './styles/app.css';
-import logoUrl from './assets/brand/logo.svg';
 import { loadDataset } from './data/browser';
 import { machineStatusRows, plantOverview } from './domain/queries';
 import { isLang } from './domain/langs';
@@ -48,6 +47,13 @@ function createScene(): SceneView {
 
 const scene = createScene();
 
+// The KPI chips sit over the hall and wrap onto more rows on narrow screens; the board view
+// (no WebGL) starts below them, so it needs their real height rather than a fixed offset.
+const hud = $('hud');
+const syncHudOffset = () =>
+  hud.parentElement?.style.setProperty('--hud-bottom', `${hud.offsetTop + hud.offsetHeight}px`);
+if (typeof ResizeObserver === 'function') new ResizeObserver(syncHudOffset).observe(hud);
+
 let chat: Chat | undefined;
 let autoplayTimer: number | undefined;
 
@@ -56,10 +62,12 @@ function render(): void {
   document.documentElement.lang = lang;
   $('brand-sub').textContent =
     `${ds.plant.company.name} · ${ds.plant.company.site} — ${t.subtitle}`;
-  $('fictional-badge').textContent = t.fictional;
-  const mode = $('mode-badge');
-  mode.textContent = LIVE ? t.modeLive : t.modeRecorded;
-  mode.classList.toggle('badge--live', LIVE);
+  const modeLabel = LIVE ? t.modeLive : t.modeRecorded;
+  const mode = $('mode-label');
+  mode.textContent = modeLabel;
+  mode.classList.toggle('mode-label--live', LIVE);
+  // the embedded view has no top bar or footer, so the chat panel carries the same discreet note
+  $('chat-meta').textContent = `${modeLabel} · ${t.sampleData}`;
   $('scene').setAttribute('aria-label', t.sceneLabel);
   $('chat-title').textContent = t.chatTitle;
   for (const b of document.querySelectorAll<HTMLButtonElement>('[data-lang]')) {
@@ -80,15 +88,13 @@ function render(): void {
   code.textContent = 'npm run dev:live';
   note.replaceChildren(t.liveNote, ' ', code);
 
+  const sample = document.createElement('span');
+  sample.textContent = t.sampleData;
   const link = document.createElement('a');
   link.href = 'https://kokot.it';
   link.className = 'footer-brand';
-  const logo = document.createElement('img');
-  logo.src = logoUrl;
-  logo.alt = 'kokot.it';
-  logo.height = 14;
-  link.append(logo);
-  $('footer').replaceChildren(`${t.footer} `, link);
+  link.textContent = '© 2026 kokot.it';
+  $('footer').replaceChildren(sample, link);
 
   scene.setLang(lang);
   chat?.dispose();

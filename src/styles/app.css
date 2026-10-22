@@ -72,18 +72,22 @@ input {
 .topbar-spacer {
   flex: 1;
 }
-.badge {
+/* run mode: a quiet label, not a badge */
+.mode-label {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
   color: var(--color-text-muted);
   white-space: nowrap;
 }
-.badge--live {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+.mode-label--live::before {
+  content: '';
+  display: inline-block;
+  width: var(--space-2);
+  height: var(--space-2);
+  margin-right: var(--space-2);
+  border-radius: 50%;
+  background: var(--status-running);
+  vertical-align: middle;
 }
 .lang-switch {
   display: flex;
@@ -128,6 +132,11 @@ input {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* labels never slide under the KPI chips (--hud-bottom is measured in main.ts) */
+  clip-path: inset(var(--hud-bottom, 0) 0 0 0);
+}
+.is-close .label-line {
+  visibility: hidden;
 }
 
 .hud {
@@ -428,6 +437,7 @@ input {
 }
 .composer-note code {
   font-family: var(--font-mono);
+  white-space: nowrap;
 }
 
 .footer {
@@ -441,19 +451,18 @@ input {
 .footer {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
 }
 .footer a {
   color: var(--color-text-muted);
 }
 .footer-brand {
-  display: inline-flex;
-  align-items: center;
+  text-decoration: none;
 }
-.footer-brand img {
-  display: block;
-  height: var(--space-4);
-  width: auto;
+.footer-brand:hover {
+  color: var(--color-text);
 }
 
 .visually-hidden {
@@ -478,6 +487,16 @@ input {
 .embed .chat-head {
   padding: var(--space-3) var(--space-4);
 }
+.chat-meta {
+  display: none;
+}
+.embed .chat-meta {
+  display: block;
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--color-text-muted);
+}
 
 /* ---------- narrow screens: scene on top, chat below ---------- */
 @media (max-width: 820px) {
@@ -495,8 +514,7 @@ input {
     border-left: 0;
     border-top: 1px solid var(--color-line);
   }
-  .brand-sub,
-  .badge--mode {
+  .brand-sub {
     display: none;
   }
   .hud .kpi--legend {
@@ -540,7 +558,8 @@ input {
   position: absolute;
   inset: 0;
   overflow: auto;
-  padding: calc(var(--space-7) + var(--space-3)) var(--space-4) var(--space-4);
+  /* --hud-bottom is measured in main.ts: the KPI chips wrap onto more rows on narrow screens */
+  padding: calc(var(--hud-bottom, var(--space-7)) + var(--space-3)) var(--space-4) var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -585,6 +604,7 @@ input {
 .fallback-machine strong {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
+  white-space: nowrap;
 }
 .fallback-name {
   color: var(--color-text-muted);

@@ -5,9 +5,9 @@ const STRINGS = {
   en: {
     title: 'Factory Twin',
     subtitle: 'Digital twin of a production hall with an AI shift assistant',
-    fictional: 'fictional data',
-    modeRecorded: 'recorded demo',
-    modeLive: 'live',
+    sampleData: 'Sample data · fictional plant',
+    modeRecorded: 'Recorded run',
+    modeLive: 'Live (Claude API)',
     running: 'Running',
     down: 'Down',
     quality_alarm: 'Quality alarm',
@@ -15,13 +15,13 @@ const STRINGS = {
     asOf: 'as of',
     chatTitle: 'Shift assistant',
     chatIntroRecorded:
-      'Pick a question. These are recorded runs: the agent queries the plant data with tools, answers and points at the machines in 3D.',
+      'Pick a question. These are recorded runs: the agent queries the plant data with tools, answers and points at the machines in the hall.',
     chatIntroLive:
       'Ask about orders, downtime or quality. Claude answers with live tool calls on the plant data.',
     placeholder: 'e.g. Why is line 2 stopped?',
     send: 'Ask',
     thinking: 'Checking the plant data',
-    liveNote: 'Recorded demo. Run it locally with your own API key for free-form questions:',
+    liveNote: 'For your own questions, run it locally with a Claude API key:',
     error: 'Something went wrong',
     line: 'Line',
     status: 'Status',
@@ -35,7 +35,6 @@ const STRINGS = {
       'This browser cannot show the 3D view (WebGL is off), so the hall is shown as a board. The assistant works the same.',
     sceneLabel:
       '3D view of the production hall. Drag to rotate, scroll to zoom, click a machine for details.',
-    footer: 'Veldra Components is a fictional company. Demo by',
     tools: {
       get_plant_overview: 'plant overview',
       get_machine_status: 'machine status',
@@ -52,9 +51,9 @@ const STRINGS = {
   pl: {
     title: 'Factory Twin',
     subtitle: 'Cyfrowy bliźniak hali produkcyjnej z asystentem AI',
-    fictional: 'dane fikcyjne',
-    modeRecorded: 'nagrane demo',
-    modeLive: 'na żywo',
+    sampleData: 'Dane przykładowe · fikcyjny zakład',
+    modeRecorded: 'Zapisany przebieg',
+    modeLive: 'Na żywo (Claude API)',
     running: 'Praca',
     down: 'Przestój',
     quality_alarm: 'Alarm jakości',
@@ -62,13 +61,13 @@ const STRINGS = {
     asOf: 'stan na',
     chatTitle: 'Asystent zmiany',
     chatIntroRecorded:
-      'Wybierz pytanie. To nagrane przebiegi: agent pyta dane hali przez narzędzia, odpowiada i pokazuje maszyny w 3D.',
+      'Wybierz pytanie. To zapisane przebiegi: agent sprawdza dane hali narzędziami, odpowiada i wskazuje maszyny na hali.',
     chatIntroLive:
       'Zapytaj o zlecenia, przestoje albo jakość. Claude odpowiada, wywołując narzędzia na danych hali.',
     placeholder: 'np. Dlaczego stoi linia 2?',
     send: 'Zapytaj',
     thinking: 'Sprawdzam dane hali',
-    liveNote: 'Nagrane demo. Pytania z własną treścią: uruchom lokalnie z własnym kluczem API:',
+    liveNote: 'Własne pytania: uruchom lokalnie z kluczem Claude API:',
     error: 'Coś poszło nie tak',
     line: 'Linia',
     status: 'Status',
@@ -82,7 +81,6 @@ const STRINGS = {
       'Ta przeglądarka nie pokaże widoku 3D (WebGL jest wyłączony), więc hala jest pokazana jako tablica. Asystent działa tak samo.',
     sceneLabel:
       'Widok 3D hali produkcyjnej. Przeciągnij, aby obrócić, przewiń, aby przybliżyć, kliknij maszynę, aby zobaczyć szczegóły.',
-    footer: 'Veldra Components to firma fikcyjna. Demo by',
     tools: {
       get_plant_overview: 'przegląd hali',
       get_machine_status: 'status maszyn',

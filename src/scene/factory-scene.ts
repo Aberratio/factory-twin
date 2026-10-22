@@ -145,6 +145,8 @@ export class FactoryScene {
 
   focus(target: FocusTarget): void {
     const to = cameraPose(this.ds, target);
+    // close up, the far line labels crowd the edges of the view; they return with the overview
+    this.container.classList.toggle('is-close', target.kind !== 'overview');
     if (this.opts.reducedMotion) {
       this.fly = null;
       this.setPose(to);
