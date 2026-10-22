@@ -114,7 +114,8 @@ works from any sub-path. No server is needed.
 the tab is hidden or the iframe is scrolled out of view, the pixel ratio is capped at 1.75, and
 `prefers-reduced-motion` turns off camera flights, animation and text reveal.
 
-The Inter and JetBrains Mono fonts load from Google Fonts. Everything else is in the bundle.
+Everything ships in the bundle, including the fonts (self-hosted Schibsted Grotesk and JetBrains
+Mono, SIL OFL 1.1). The page makes no third-party requests.
 
 ## Architecture
 
@@ -144,9 +145,16 @@ All numbers are relative to a fixed plant clock (`snapshot` in `plant.json`, 202
 Plant time is handled as whole minutes without time zones, so every machine and browser computes
 the same figures.
 
-**Design tokens:** every colour, font and spacing value is a CSS custom property in
-`src/styles/tokens.css`, and the 3D scene reads its colours from the same file. Swapping that file
-for the kokot.it brand tokens restyles everything.
+**Brand and design tokens:** `src/styles/tokens.css` is the kokot.it brand token file, copied
+unchanged from the kokot-it repo (with `fonts.css`, the woff2 files and their OFL licences in
+`src/assets/fonts/`, and the logo in `src/assets/brand/`). A short block at the end adds what
+only this app needs (machine status and 3D hall colours, a few layout sizes), always through the
+brand's own tokens. Running, down and quality-alarm machines use the brand's success, danger and
+warning colours. What the agent points at is Ion. Signal (amber) is kept for calls to action and
+focus. The 3D scene reads every colour from this file (`src/scene/tokens.ts`), and
+`tests/brand-tokens.test.ts` pins the scene's colours to the brand palette, fails on any colour
+literal outside `tokens.css`, and checks that nothing loads from Google Fonts. To pick up a newer
+brand, copy the new file over the upper part and keep the app block.
 
 ## Quality checks
 
@@ -192,6 +200,3 @@ The tests cover:
   stopped or alarming machine on the line marks its orders at risk.
 - Machines are built from primitives, not CAD models.
 - The 3D view needs WebGL.
-- Inter and JetBrains Mono load from Google Fonts, as the temporary brand tokens specify. For an
-  EU site, self-hosting the fonts (one `@font-face` block next to `tokens.css`) avoids sending
-  visitors' IP addresses to Google.

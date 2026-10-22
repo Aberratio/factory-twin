@@ -1,64 +1,227 @@
 /*
- * Design tokens: the ONLY place for colours, fonts, sizes and spacing.
- * The 3D scene reads its colours from here too (src/scene/tokens.ts), so swapping this
- * file for the kokot.it brand tokens restyles the whole demo.
+ * kokot.it brand tokens: the single source of colour, type, spacing, shape and motion
+ * for the site, the 3D scene (read through src/styles/tokens.ts) and the PDF templates
+ * (docs-templates/shared/docs.css). Rules and contrast ratios: brand.md.
+ *
+ * Two layers:
+ *   1. primitives (--ink-*, --amber-*, --ion-* …) — raw values, never used directly in components;
+ *   2. semantic tokens (--color-*, --scene-* …) — what components and the scene use.
+ * Themes only reassign semantic tokens: the default is the dark screen theme,
+ * [data-theme='paper'] is the light print theme used by the PDF templates.
+ */
+@import url('./fonts.css');
+
+:root {
+  color-scheme: dark;
+
+  /* ---- Primitives: colour ---------------------------------------------------- */
+  --ink-950: #07080b;
+  --ink-900: #0b0d12;
+  --ink-850: #11141b;
+  --ink-800: #181c25;
+  --ink-700: #2a303c;
+  --ink-600: #3d4452;
+  --ink-400: #7f8697;
+  --ink-300: #a3a9b7;
+  --ink-100: #eceef3;
+  --paper-0: #ffffff;
+  --paper-50: #f4f5f7;
+  --paper-200: #d9dde4;
+  --paper-600: #5f6676;
+  --paper-700: #4b5262;
+
+  --amber-300: #ffc66e;
+  --amber-400: #ffb547;
+  --amber-700: #9a5300;
+  --ion-300: #8fb3ff;
+  --ion-700: #2d56c9;
+  --mint-300: #4fd1a1;
+  --mint-700: #0f7a52;
+  --sun-300: #ffd166;
+  --sun-700: #7a5a00;
+  --coral-300: #ff7a7a;
+  --coral-700: #b42318;
+
+  /* ---- Semantic: colour (dark screen theme) ---------------------------------- */
+  --color-bg: var(--ink-900);
+  --color-bg-deep: var(--ink-950);
+  --color-surface: var(--ink-850);
+  --color-surface-raised: var(--ink-800);
+  --color-line: var(--ink-700);
+  --color-line-strong: var(--ink-600);
+  --color-text: var(--ink-100);
+  --color-text-muted: var(--ink-300);
+  --color-text-subtle: var(--ink-400);
+  /* Signal: the one warm accent. Calls to action, focus, the "task" pulse in the scene. */
+  --color-accent: var(--amber-400);
+  --color-accent-hover: var(--amber-300);
+  --color-on-accent: var(--ink-900);
+  /* Ion: the cool secondary accent. Links, data, the "result" pulse in the scene. */
+  --color-accent-2: var(--ion-300);
+  --color-focus: var(--amber-400);
+  --color-success: var(--mint-300);
+  --color-warning: var(--sun-300);
+  --color-danger: var(--coral-300);
+  --color-info: var(--ion-300);
+  --color-selection: rgb(255 181 71 / 0.28);
+
+  /* ---- Scene (read by src/styles/tokens.ts; the scene never hardcodes colours) */
+  --scene-bg: var(--ink-950);
+  --scene-node: var(--ink-300);
+  --scene-edge: var(--ink-600);
+  --scene-pulse-task: var(--amber-400);
+  --scene-pulse-result: var(--ion-300);
+  --scene-cursor: var(--amber-300);
+
+  /* ---- Typography ------------------------------------------------------------ */
+  --font-sans:
+    'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Consolas, monospace;
+
+  /* Modular scale ~1.25 for body sizes, fluid clamps for headings (360px → 1280px). */
+  --text-2xs: 0.6875rem; /* 11px — mono labels only */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-md: 1.125rem; /* 18px — lead paragraphs */
+  --text-lg: 1.375rem; /* 22px */
+  --text-xl: clamp(1.5rem, 1.32rem + 0.8vw, 1.875rem); /* 24 → 30px */
+  --text-2xl: clamp(1.875rem, 1.55rem + 1.45vw, 2.75rem); /* 30 → 44px */
+  --text-3xl: clamp(2.375rem, 1.85rem + 2.35vw, 3.75rem); /* 38 → 60px */
+  --text-display: clamp(2.875rem, 1.9rem + 4.35vw, 5.5rem); /* 46 → 88px */
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.2;
+  --leading-normal: 1.55;
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.02em;
+  --tracking-normal: 0;
+  --tracking-label: 0.08em;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --measure: 66ch;
+
+  /* ---- Spacing: 4px base -------------------------------------------------------- */
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.5rem; /* 24 */
+  --space-6: 2rem; /* 32 */
+  --space-7: 3rem; /* 48 */
+  --space-8: 4rem; /* 64 */
+  --space-9: 6rem; /* 96 */
+  --space-10: 8rem; /* 128 */
+  --container: 76rem;
+  --gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);
+
+  /* ---- Shape ------------------------------------------------------------------ */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --border-width: 1px;
+
+  /* ---- Elevation and glow ------------------------------------------------------ */
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 8px 24px rgb(0 0 0 / 0.45), 0 1px 0 rgb(255 255 255 / 0.04) inset;
+  --glow-accent: 0 0 0 1px rgb(255 181 71 / 0.45), 0 0 28px rgb(255 181 71 / 0.22);
+  --glow-accent-2: 0 0 0 1px rgb(143 179 255 / 0.4), 0 0 28px rgb(143 179 255 / 0.18);
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus);
+
+  /* ---- Motion ----------------------------------------------------------------- */
+  --duration-instant: 80ms;
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
+  --duration-scene: 1400ms; /* scene re-wiring between page sections */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-signal: cubic-bezier(0.3, 0, 0, 1); /* a pulse leaving a node: fast start, soft arrival */
+  --motion-scale: 1; /* 0 under prefers-reduced-motion: the scene holds still */
+
+  /* ---- Layers ----------------------------------------------------------------- */
+  --z-scene: -1;
+  --z-content: 1;
+  --z-header: 10;
+  --z-overlay: 100;
+}
+
+/* Reduced motion: UI transitions collapse to near-instant; the scene reads --motion-scale. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 1ms;
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+    --duration-scene: 1ms;
+    --motion-scale: 0;
+  }
+}
+
+/*
+ * Paper theme: light background for print and PDF (ink, office printers, long reading).
+ * Works on <html> (PDF templates) and on any element (light panels inside a dark page).
+ */
+[data-theme='paper'] {
+  color-scheme: light;
+  --color-bg: var(--paper-0);
+  --color-bg-deep: var(--paper-0);
+  --color-surface: var(--paper-50);
+  --color-surface-raised: var(--paper-0);
+  --color-line: var(--paper-200);
+  --color-line-strong: var(--paper-600);
+  --color-text: var(--ink-900);
+  --color-text-muted: var(--paper-700);
+  --color-text-subtle: var(--paper-600);
+  --color-accent: var(--amber-700);
+  --color-accent-hover: var(--amber-700);
+  --color-on-accent: var(--paper-0);
+  --color-accent-2: var(--ion-700);
+  --color-focus: var(--amber-700);
+  --color-success: var(--mint-700);
+  --color-warning: var(--sun-700);
+  --color-danger: var(--coral-700);
+  --color-info: var(--ion-700);
+  --color-selection: rgb(154 83 0 / 0.18);
+  --shadow-1: none;
+  --shadow-2: none;
+  --glow-accent: none;
+  --glow-accent-2: none;
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-focus);
+}
+
+/*
+ * ---- factory-twin application tokens -------------------------------------------------------
+ * Everything above is the kokot.it brand file, copied unchanged from kokot-it (origin/next,
+ * src/styles/tokens.css). Below: the few values this app needs that the brand does not define,
+ * expressed through the brand's own tokens wherever a colour is involved.
  */
 :root {
-  /* Base palette (temporary, until the kokot.it brand tokens land) */
-  --color-bg: #0b0f14;
-  --color-surface: #121821;
-  --color-surface-2: #18202b;
-  --color-border: #243041;
-  --color-text: #e6edf3;
-  --color-text-muted: #9aa7b4;
-  --color-accent: #5eead4;
-  --color-accent-2: #f59e0b;
-  --color-danger: #f87171;
-  --color-on-accent: #04201b;
-
-  /* Machine status */
-  --status-running: var(--color-accent);
+  /* Machine status (the 3D scene, the HUD, labels) */
+  --status-running: var(--color-success);
   --status-down: var(--color-danger);
-  --status-quality: var(--color-accent-2);
+  --status-quality: var(--color-warning);
 
-  /* 3D scene */
-  --scene-bg: var(--color-bg);
-  --scene-floor: #0f151d;
-  --scene-lane: #16202b;
-  --scene-grid: #1b2532;
-  --scene-machine: #4d5d70;
-  --scene-machine-detail: #7a8a9c;
-  --scene-conveyor: #2a3543;
-  --scene-highlight: var(--color-accent);
+  /* 3D hall (read by src/scene/tokens.ts) */
+  --scene-floor: var(--ink-900);
+  --scene-lane: var(--ink-850);
+  --scene-grid: var(--ink-800);
+  --scene-machine: var(--ink-600);
+  --scene-machine-detail: var(--ink-400);
+  --scene-conveyor: var(--ink-700);
+  --scene-highlight: var(--color-accent-2); /* Ion: what the agent points at ("result") */
 
-  /* Typography (loaded from Google Fonts in index.html) */
-  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', monospace;
-  --text-3xs: 0.5625rem;
-  --text-2xs: 0.6875rem;
-  --text-xs: 0.75rem;
-  --text-sm: 0.8125rem;
-  --text-md: 0.9375rem;
-  --text-lg: 1.125rem;
-  --leading: 1.5;
-
-  /* Spacing, radius, layout */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --chat-width: 380px;
-  --card-width: 320px;
-  --dot-size: 0.6rem;
-  --log-min-height: 12rem;
-  --radius-pill: 999px;
-  --chat-width-embed: 340px;
+  /* Layout and small UI sizes */
+  --text-3xs: 0.5625rem; /* 9px — machine labels on phones */
   --chip-padding: 1px 6px;
+  --dot-size: 0.6rem;
   --blur: 6px;
-  --shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+  --chat-width: 380px;
+  --chat-width-embed: 340px;
+  --card-width: 320px;
+  --log-min-height: 12rem;
 }

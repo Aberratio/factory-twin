@@ -1,6 +1,6 @@
 import { Color } from 'three';
 
-const NAMES = {
+export const SCENE_TOKENS = {
   bg: '--scene-bg',
   floor: '--scene-floor',
   lane: '--scene-lane',
@@ -15,13 +15,13 @@ const NAMES = {
   text: '--color-text',
 } as const;
 
-export type SceneColors = Record<keyof typeof NAMES, Color>;
+export type SceneColors = Record<keyof typeof SCENE_TOKENS, Color>;
 
 /** Scene colours come from the CSS tokens (tokens.css), never from literals in the scene code. */
 export function readSceneColors(root: Element = document.documentElement): SceneColors {
   const style = getComputedStyle(root);
   const out = {} as SceneColors;
-  for (const [key, prop] of Object.entries(NAMES) as [keyof typeof NAMES, string][]) {
+  for (const [key, prop] of Object.entries(SCENE_TOKENS) as [keyof typeof SCENE_TOKENS, string][]) {
     const value = style.getPropertyValue(prop).trim();
     if (!value) throw new Error(`Missing design token ${prop} (src/styles/tokens.css)`);
     out[key] = new Color(value);
