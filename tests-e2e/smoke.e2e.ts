@@ -196,3 +196,54 @@ describe('browser without WebGL (e.g. an iframe with 3D disabled)', () => {
     }
   });
 });
+
+describe('scene labels stay inside the scene', () => {
+  const views = [
+    { query: '', width: 1024, height: 768 },
+    { query: '', width: 1280, height: 800 },
+    { query: '', width: 1440, height: 900 },
+    { query: '&embed=1', width: 1200, height: 700 },
+    { query: '&embed=1', width: 900, height: 560 },
+  ];
+  for (const lang of ['en', 'pl']) {
+    for (const v of views) {
+      it(`${lang}, ${v.width}x${v.height}${v.query}: every visible label is within the scene`, async () => {
+        const page = await browser.newPage({ viewport: { width: v.width, height: v.height } });
+        try {
+          await page.goto(`${base}?lang=${lang}&autoplay=0${v.query}`);
+          await page.evaluate(() => document.fonts.ready);
+          await page.locator('.label-line').first().waitFor({ state: 'attached' });
+          // let the render loop place the labels and fit the line labels
+          await page.waitForTimeout(500);
+          const outside = await page.evaluate(() => {
+            const scene = document.getElementById('scene')!.getBoundingClientRect();
+            return [...document.querySelectorAll<HTMLElement>('.label-line, .label-machine')]
+              .filter((el) => {
+                const style = getComputedStyle(el);
+                return style.display !== 'none' && style.visibility !== 'hidden';
+              })
+              .map((el) => ({ text: el.textContent, r: el.getBoundingClientRect() }))
+              .filter(
+                ({ r }) =>
+                  r.width > 0 &&
+                  (r.left < scene.left - 0.5 ||
+                    r.right > scene.right + 0.5 ||
+                    r.top < scene.top - 0.5 ||
+                    r.bottom > scene.bottom + 0.5),
+              )
+              .map(({ text, r }) => `${text} (${Math.round(r.left)}..${Math.round(r.right)})`);
+          });
+          expect(await page.locator('.label-line').count()).toBe(3);
+          expect(outside).toEqual([]);
+          // the overview is framed so no line label needs the edge shift
+          const shifted = await page
+            .locator('.label-line')
+            .evaluateAll((els) => els.filter((e) => (e as HTMLElement).style.marginLeft).length);
+          expect(shifted).toBe(0);
+        } finally {
+          await page.close();
+        }
+      });
+    }
+  }
+});

@@ -40,9 +40,77 @@ export const OVERVIEW: CameraPose = {
   target: { x: -2.2, y: 0, z: -1.5 },
 };
 
-/** Where the camera goes for a focus action. Pure, so the replay test can reason about it. */
-export function cameraPose(ds: Dataset, target: FocusTarget): CameraPose {
-  if (target.kind === 'overview') return OVERVIEW;
+/**
+ * How the overview is adjusted to the scene: `pullback` scales the camera distance (1 is the
+ * base pose), `pan` moves camera and target along the hall's x axis (negative moves the hall
+ * to the right on screen).
+ */
+export interface Framing {
+  pullback: number;
+  pan: number;
+}
+
+export const BASE_FRAMING: Framing = { pullback: 1, pan: 0 };
+/** How far the overview may be pulled back on a narrow scene, as a multiple of its distance. */
+export const MAX_OVERVIEW_PULLBACK = 1.6;
+/** How far the overview may be panned to make room for the line labels, in world units. */
+export const MAX_OVERVIEW_PAN = 8;
+const PULLBACK_STEP = 0.02;
+
+export function overviewPose(framing: Framing = BASE_FRAMING): CameraPose {
+  const { pullback: k, pan } = framing;
+  if (k === 1 && pan === 0) return OVERVIEW;
+  const { position: p, target: t } = OVERVIEW;
+  return {
+    position: {
+      x: t.x + (p.x - t.x) * k + pan,
+      y: t.y + (p.y - t.y) * k,
+      z: t.z + (p.z - t.z) * k,
+    },
+    target: { x: t.x + pan, y: t.y, z: t.z },
+  };
+}
+
+/**
+ * Room left on screen for a candidate framing, in pixels: `left` between the line labels and
+ * the left edge, `right` between the hall and the right edge. Negative means it does not fit.
+ */
+export type Slack = (framing: Framing) => { left: number; right: number };
+
+/**
+ * The framing that fits the hall and its line labels with the least change: no pullback if
+ * panning alone makes room, otherwise the smallest pullback (to PULLBACK_STEP) for which some
+ * pan fits. Assumes panning towards negative x adds room on the left and takes it on the
+ * right. Falls back to the largest pullback when nothing fits.
+ */
+export function findFraming(slack: Slack): Framing {
+  for (let k = 1; k <= MAX_OVERVIEW_PULLBACK + 1e-9; k += PULLBACK_STEP) {
+    const pullback = Math.round(k * 100) / 100;
+    const at = (pan: number) => slack({ pullback, pan });
+    if (at(0).left >= 0) return { pullback, pan: 0 };
+    if (at(-MAX_OVERVIEW_PAN).left < 0) continue;
+    let lo = -MAX_OVERVIEW_PAN; // fits on the left
+    let hi = 0; // does not
+    while (hi - lo > 0.05) {
+      const mid = (lo + hi) / 2;
+      if (at(mid).left >= 0) lo = mid;
+      else hi = mid;
+    }
+    if (at(lo).right >= 0) return { pullback, pan: lo };
+  }
+  return { pullback: MAX_OVERVIEW_PULLBACK, pan: 0 };
+}
+
+/**
+ * Where the camera goes for a focus action. Pure, so the replay test can reason about it.
+ * The overview's framing is measured by the scene, so the hall and its line labels fit.
+ */
+export function cameraPose(
+  ds: Dataset,
+  target: FocusTarget,
+  framing: Framing = BASE_FRAMING,
+): CameraPose {
+  if (target.kind === 'overview') return overviewPose(framing);
   if (target.kind === 'line') {
     const z = lineZ(ds, target.id);
     return { position: { x: 0, y: 14, z: z + 19 }, target: { x: 0, y: 0.5, z } };
