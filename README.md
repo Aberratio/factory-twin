@@ -10,11 +10,8 @@ and shows you the machine in the hall, highlighting it and flying the camera the
 Built as a reference solution for plant managers and the teams building their tools: how an AI
 agent can sit on top of production data without guessing a single number.
 
-> **PL:** Cyfrowy bliźniak hali produkcyjnej w 3D z asystentem AI dla kierownika zmiany. Agent
-> odpowiada na pytania o zlecenia, przestoje i jakość, korzystając z narzędzi na danych hali, i
-> pokazuje odpowiedź w scenie: podświetla maszynę i przenosi tam kamerę. Domyślnie odtwarza zapisane
-> przebiegi (bez klucza API i bez serwera); lokalnie można go uruchomić z Claude API. Interfejs i
-> przebiegi są po polsku i po angielsku (`?lang=pl`). Dane są przykładowe, zakład jest fikcyjny.
+The interface and the recorded runs are available in English and Polish: switch with the EN/PL
+buttons in the header, or set `?lang=en` / `?lang=pl` in the URL.
 
 ![Shift overview: two machines need attention, both highlighted in the hall](docs/screenshots/desktop-overview-en.png)
 
@@ -46,9 +43,11 @@ numbers, and the machine in question lit up on a map of the hall.
 | `?embed=1`: no header or footer, made for an iframe                                                     | Click any machine for its current status                                    |
 
 <p>
-  <img src="docs/screenshots/mobile-orders-pl.png" alt="Phone layout, 3D view" width="260" />
+  <img src="docs/screenshots/mobile-overview-en.png" alt="Phone layout, 3D view, English" width="240" />
   &nbsp;
-  <img src="docs/screenshots/mobile-board-en.png" alt="Phone layout, board view without WebGL" width="260" />
+  <img src="docs/screenshots/mobile-orders-pl.png" alt="Phone layout, 3D view, Polish" width="240" />
+  &nbsp;
+  <img src="docs/screenshots/mobile-board-en.png" alt="Phone layout, board view without WebGL" width="240" />
 </p>
 
 Five recorded scenarios ship in English and Polish: shift overview, biggest downtime, "will
@@ -179,11 +178,12 @@ what the tool returns, so recordings cannot drift from the data.
 ## Tests and quality
 
 ```bash
-npm test               # 239 unit, DOM and HTTP-level tests (Vitest)
+npm test               # 245 unit, DOM and HTTP-level tests (Vitest)
 npm run lint           # ESLint + Prettier
 npm run typecheck
 npm run build
 npm run check:wording  # copy check over the built site and the docs
+npm run check:language # English everywhere except the Polish UI strings and sample data
 npm run test:e2e       # builds, then 7 browser tests in headless Chromium (Playwright)
 ```
 
