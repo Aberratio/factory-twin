@@ -84,6 +84,11 @@ export async function runAgentTurn(args: {
     );
 
     if (response.stop_reason !== 'tool_use' && response.stop_reason !== 'pause_turn') {
+      // A turn with no text would reach the browser history as an empty assistant message,
+      // which the API rejects on the next request: report it instead.
+      if (!steps.some((s) => s.type === 'text')) {
+        throw new AgentError('The model finished without an answer. Please ask again.');
+      }
       return { transcript: { question, steps }, model: response.model };
     }
 

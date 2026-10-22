@@ -159,6 +159,16 @@ describe('runAgentTurn', () => {
     ]);
   });
 
+  it('refuses to return a turn that ends without any text (it would poison the history)', async () => {
+    const { client } = fakeClient([
+      message([toolUse('tu_1', 'highlight_machines', { machine_ids: ['L2-M2'] })], 'tool_use'),
+      message([], 'end_turn'),
+    ]);
+    await expect(
+      runAgentTurn({ client, dataset: ds, question: 'x', lang: 'en', history: [] }),
+    ).rejects.toThrow(/without an answer/);
+  });
+
   it('stops on a refusal without running the refused turn', async () => {
     const { client } = fakeClient([message([toolUse('tu_1', 'get_downtime', {})], 'refusal')]);
     await expect(

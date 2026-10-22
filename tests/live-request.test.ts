@@ -39,6 +39,18 @@ describe('parseChatRequest', () => {
       },
     ],
     ['malformed history', { question: 'x', history: [{ question: 1 }] }],
+    // F1 regression: an empty assistant turn makes the Messages API reject every later request
+    ['an empty answer in history', { question: 'x', history: [{ question: 'a', answer: '' }] }],
+    [
+      'a whitespace-only answer in history',
+      { question: 'x', history: [{ question: 'a', answer: '  ' }] },
+    ],
+    ['an empty question in history', { question: 'x', history: [{ question: '', answer: 'b' }] }],
+    ['a null history entry', { question: 'x', history: [null] }],
+    [
+      'an answer over the limit',
+      { question: 'x', history: [{ question: 'a', answer: 'y'.repeat(4001) }] },
+    ],
   ])('rejects %s', (_label, body) => {
     expect(parseChatRequest(body).ok).toBe(false);
   });
