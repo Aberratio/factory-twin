@@ -6,6 +6,7 @@ import { chromium, type Browser, type Page } from 'playwright';
 import type { PreviewServer } from 'vite';
 import { preview } from 'vite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import qualityAlarmPl from '../src/recordings/pl/quality-alarm.json';
 
 let server: PreviewServer;
 let browser: Browser;
@@ -92,7 +93,7 @@ describe('static build, recorded mode', () => {
 
     await page.getByRole('button', { name: 'PL', exact: true }).click();
     expect(await page.locator('html').getAttribute('lang')).toBe('pl');
-    expect(await page.getByRole('button', { name: 'Alarm jakości' }).isVisible()).toBe(true);
+    expect(await page.getByRole('button', { name: qualityAlarmPl.title }).isVisible()).toBe(true);
     expect(await page.locator('.msg').count()).toBe(0); // the English answer is gone
     expect(await page.locator('.label-machine.is-highlighted').count()).toBe(0); // and so is its highlight
     expect(page.url()).toContain('lang=pl');

@@ -61,8 +61,11 @@ describe('FallbackScene', () => {
     const { scene, container, chip } = mount();
     scene.setLang('pl');
     expect(container.querySelector('.scene-fallback-note')?.textContent).toBe('brak 3D');
-    expect(chip('L3-M2')?.textContent).toContain('Piec utwardzający');
-    expect(container.querySelector('.fallback-line h3')?.textContent).toBe('L1 · Obróbka CNC');
+    // Polish names come from the plant data, so the test does not repeat UI copy.
+    const machine = ds.plant.machines.find((m) => m.id === 'L3-M2');
+    const line = ds.plant.lines.find((l) => l.id === 'L1');
+    expect(chip('L3-M2')?.textContent).toContain(machine?.name.pl);
+    expect(container.querySelector('.fallback-line h3')?.textContent).toBe(`L1 · ${line?.name.pl}`);
   });
 });
 
