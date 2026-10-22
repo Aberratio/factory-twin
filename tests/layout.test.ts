@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { cameraPose, isCloseView, machinePosition, OVERVIEW } from '../src/scene/layout';
+import {
+  cameraPose,
+  findFraming,
+  isCloseView,
+  machinePosition,
+  MAX_OVERVIEW_PULLBACK,
+  OVERVIEW,
+  overviewPose,
+} from '../src/scene/layout';
 import { sampleDataset } from './helpers';
 
 const ds = sampleDataset();
@@ -50,5 +58,47 @@ describe('scene layout', () => {
     };
     expect(isCloseView(close)).toBe(true);
     expect(isCloseView(zoomedOut)).toBe(false);
+  });
+
+  it('pulls the overview back along its line of sight and pans it along x', () => {
+    const pose = overviewPose({ pullback: 1.5, pan: -2 });
+    const d = (p: typeof OVERVIEW) =>
+      Math.hypot(p.position.x - p.target.x, p.position.y - p.target.y, p.position.z - p.target.z);
+    expect(d(pose)).toBeCloseTo(d(OVERVIEW) * 1.5);
+    expect(pose.target).toEqual({ ...OVERVIEW.target, x: OVERVIEW.target.x - 2 });
+    expect(overviewPose()).toEqual(OVERVIEW);
+    expect(cameraPose(ds, { kind: 'overview' }, { pullback: 1.5, pan: -2 })).toEqual(pose);
+  });
+
+  describe('findFraming', () => {
+    // a toy screen: panning by -1 gives 10 px on the left and takes 10 px on the right,
+    // pulling back by 0.1 gives 5 px on each side
+    const toy = (left0: number, right0: number) => (f: { pullback: number; pan: number }) => ({
+      left: left0 - f.pan * 10 + (f.pullback - 1) * 50,
+      right: right0 + f.pan * 10 + (f.pullback - 1) * 50,
+    });
+
+    it('keeps the base pose when everything fits', () => {
+      expect(findFraming(toy(5, 5))).toEqual({ pullback: 1, pan: 0 });
+    });
+
+    it('pans before pulling back when the right side has room', () => {
+      const f = findFraming(toy(-20, 40));
+      expect(f.pullback).toBe(1);
+      expect(f.pan).toBeCloseTo(-2, 1);
+    });
+
+    it('pulls back only as far as needed when panning alone is not enough', () => {
+      const f = findFraming(toy(-30, 0));
+      expect(f.pullback).toBeGreaterThan(1);
+      expect(f.pullback).toBeLessThan(1.4);
+      const slack = toy(-30, 0)(f);
+      expect(slack.left).toBeGreaterThanOrEqual(0);
+      expect(slack.right).toBeGreaterThanOrEqual(0);
+    });
+
+    it('falls back to the largest pullback when nothing fits', () => {
+      expect(findFraming(() => ({ left: -1, right: -1 })).pullback).toBe(MAX_OVERVIEW_PULLBACK);
+    });
   });
 });

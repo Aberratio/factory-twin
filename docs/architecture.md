@@ -68,6 +68,14 @@ plant before the scene applies it.
   state for the browser tests and for an embedding page. No behaviour depends on them.
 - Clicking a machine opens a card (status, since, reason, 8 h rejects; "ask about this machine" in
   live mode). It is built from the same query functions as the agent's tools.
+- The overview is framed for the scene it is shown in. The line labels sit left of their lanes and
+  their width depends on the language, so the scene projects them with their real widths and pans
+  the camera, then pulls it back only as far as needed, until every label fits. The fog distance
+  follows the pullback. The framing is redone on resize, on a language switch and once the fonts
+  load, unless the user has moved the camera; a label that still reaches the edge after a manual
+  pan is shifted inwards. The result is exposed as `data-overview-framing` on the scene.
+- Tools and the system prompt use the English names from `plant.json`; the interface shows the
+  name for its language (lines, machines and the site).
 
 ## Brand and colour
 

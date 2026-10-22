@@ -32,6 +32,10 @@ import {
   lineZ,
   machinePosition,
   OVERVIEW,
+  findFraming,
+  MAX_OVERVIEW_PULLBACK,
+  overviewPose,
+  type Framing,
   type CameraPose,
 } from './layout';
 import { buildMachine } from './machines';
@@ -40,6 +44,12 @@ import { readSceneColors, type SceneColors } from './tokens';
 const MAX_DPR = 1.75;
 const FLY_MS = 1300;
 const CONVEYOR_LENGTH = 25;
+/** Gap kept between a line label and the left edge of the scene. */
+const LABEL_EDGE_PX = 8;
+/** Margin the overview framing aims for; a little more than LABEL_EDGE_PX to absorb rounding. */
+const FRAME_MARGIN_PX = 12;
+const FOG_NEAR = 45;
+const FOG_FAR = 95;
 
 interface MachineView {
   id: string;
@@ -73,7 +83,11 @@ export class FactoryScene {
   private readonly controls: OrbitControls;
   private readonly colors: SceneColors;
   private readonly machines = new Map<string, MachineView>();
-  private readonly lineLabels: { id: string; el: HTMLDivElement }[] = [];
+  private readonly lineLabels: { id: string; el: HTMLDivElement; anchor: Vector3 }[] = [];
+  /** True while the camera shows the overview the app put it in (not moved by the user). */
+  private atOverview = true;
+  /** Set when the scene size or the label text changed; handled after the next label render. */
+  private reframePending = true;
   private readonly parts: { lineStopped: boolean; items: Part[] }[] = [];
   private readonly resizeObserver: ResizeObserver;
   private readonly visibility = { tab: !document.hidden, onScreen: true };
@@ -102,16 +116,19 @@ export class FactoryScene {
     this.labels.domElement.className = 'scene-labels';
     container.appendChild(this.labels.domElement);
 
-    this.scene.fog = new Fog(this.colors.bg, 45, 95);
+    this.scene.fog = new Fog(this.colors.bg, FOG_NEAR, FOG_FAR);
     this.setPose(OVERVIEW);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = !opts.reducedMotion;
     this.controls.maxPolarAngle = Math.PI * 0.44;
     this.controls.minDistance = 6;
-    this.controls.maxDistance = 55;
+    this.controls.maxDistance = 55 * MAX_OVERVIEW_PULLBACK;
     this.controls.target.set(OVERVIEW.target.x, OVERVIEW.target.y, OVERVIEW.target.z);
     this.controls.addEventListener('change', () => (this.dirty = true));
-    this.controls.addEventListener('start', () => (this.fly = null));
+    this.controls.addEventListener('start', () => {
+      this.fly = null;
+      this.atOverview = false;
+    });
 
     this.buildHall();
     this.bindPointer();
@@ -119,6 +136,8 @@ export class FactoryScene {
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(container);
     this.resize();
+    // label widths change once the web fonts arrive
+    void document.fonts?.ready.then(() => this.requestReframe());
 
     document.addEventListener('visibilitychange', this.onVisibility);
     if ('IntersectionObserver' in window) {
@@ -151,7 +170,12 @@ export class FactoryScene {
   }
 
   focus(target: FocusTarget): void {
-    const to = cameraPose(this.ds, target);
+    const to = cameraPose(
+      this.ds,
+      target,
+      target.kind === 'overview' ? this.overviewFraming() : undefined,
+    );
+    this.atOverview = target.kind === 'overview';
     if (this.opts.reducedMotion) {
       this.fly = null;
       this.setPose(to);
@@ -191,6 +215,8 @@ export class FactoryScene {
       const line = this.ds.lines.find((l) => l.id === id);
       if (line) el.textContent = `${line.id} · ${line.name[lang]}`;
     }
+    // the line names differ in length between languages
+    this.requestReframe();
   }
 
   dispose(): void {
@@ -282,7 +308,7 @@ export class FactoryScene {
       label.center.set(1, 0.5); // right-aligned, just left of its lane
       label.position.set(-CONVEYOR_LENGTH / 2 - 1.2, 0.3, z);
       this.scene.add(label);
-      this.lineLabels.push({ id: line.id, el });
+      this.lineLabels.push({ id: line.id, el, anchor: label.position.clone() });
     }
 
     for (const m of this.ds.machines) {
@@ -446,6 +472,12 @@ export class FactoryScene {
       this.syncCloseView();
       this.renderer.render(this.scene, this.camera);
       this.labels.render(this.scene, this.camera);
+      // label widths are known only once the labels are in the DOM
+      if (this.reframePending) {
+        this.reframePending = false;
+        this.reframeOverview();
+      }
+      this.fitLineLabels();
       this.dirty = false;
     }
   };
@@ -502,6 +534,74 @@ export class FactoryScene {
     this.container.classList.toggle('is-close', close);
   }
 
+  /**
+   * The overview is framed so the line labels fit (see overviewPullback). When the user pans or
+   * zooms, a label could still reach the left edge of the scene; it is then shifted inwards
+   * rather than cut off.
+   */
+  private fitLineLabels(): void {
+    const left = this.container.getBoundingClientRect().left;
+    for (const { el } of this.lineLabels) {
+      const shift = parseFloat(el.style.marginLeft) || 0;
+      const rect = el.getBoundingClientRect();
+      if (rect.width === 0) continue; // not displayed (phone layout)
+      const overflow = LABEL_EDGE_PX - (rect.left - shift - left);
+      el.style.marginLeft = overflow > 0 ? `${overflow}px` : '';
+    }
+  }
+
+  /**
+   * How the overview must be panned or pulled back so the line labels, which sit left of their
+   * lanes, stay inside the scene without pushing the hall off the right edge. Measured with the
+   * labels' real widths, so it follows the language and the scene's size. The base pose on wide
+   * scenes and in the phone layout, where line labels are hidden.
+   */
+  private overviewFraming(): Framing {
+    const width = this.container.clientWidth;
+    const labels = this.lineLabels
+      .map(({ el, anchor }) => ({ anchor, px: el.offsetWidth }))
+      .filter((l) => l.px > 0);
+    if (!width || labels.length === 0) return { pullback: 1, pan: 0 };
+    const hallEnds = this.lineLabels.map(
+      ({ anchor }) => new Vector3(CONVEYOR_LENGTH / 2 + 0.5, 0, anchor.z),
+    );
+    const cam = this.camera.clone();
+    const v = new Vector3();
+    const screenX = (p: Vector3) => ((v.copy(p).project(cam).x + 1) / 2) * width;
+    return findFraming((framing) => {
+      const pose = overviewPose(framing);
+      cam.position.set(pose.position.x, pose.position.y, pose.position.z);
+      cam.lookAt(pose.target.x, pose.target.y, pose.target.z);
+      cam.updateMatrixWorld();
+      return {
+        left: Math.min(...labels.map(({ anchor, px }) => screenX(anchor) - px)) - FRAME_MARGIN_PX,
+        right: width - FRAME_MARGIN_PX - Math.max(...hallEnds.map(screenX)),
+      };
+    });
+  }
+
+  private requestReframe(): void {
+    this.reframePending = true;
+    this.dirty = true;
+  }
+
+  /** Re-frames the overview for the scene's size and label widths, unless the user moved away. */
+  private reframeOverview(): void {
+    if (!this.atOverview || this.fly) return;
+    const framing = this.overviewFraming();
+    // observable state for the browser test
+    this.container.dataset.overviewFraming = `${framing.pullback.toFixed(2)} ${framing.pan.toFixed(2)}`;
+    // the fog follows the camera distance, so a pulled-back hall does not fade
+    if (this.scene.fog instanceof Fog) {
+      this.scene.fog.near = FOG_NEAR * framing.pullback;
+      this.scene.fog.far = FOG_FAR * framing.pullback;
+    }
+    const pose = overviewPose(framing);
+    this.setPose(pose);
+    this.controls.target.set(pose.target.x, pose.target.y, pose.target.z);
+    this.dirty = true;
+  }
+
   private setPose(pose: CameraPose): void {
     this.camera.position.set(pose.position.x, pose.position.y, pose.position.z);
     this.camera.lookAt(new Vector3(pose.target.x, pose.target.y, pose.target.z));
@@ -516,6 +616,7 @@ export class FactoryScene {
     // keep the whole hall in view on narrow screens
     this.camera.fov = w / h < 1 ? 52 : 38;
     this.camera.updateProjectionMatrix();
+    this.requestReframe();
     this.dirty = true;
   }
 }
