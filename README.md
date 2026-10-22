@@ -141,14 +141,36 @@ URL parameters:
 `npm run build` produces a static site in `dist/` with relative asset paths (`base: './'`), so it
 works from any sub-path. No server is needed.
 
+In embed mode the app reports its content height to the parent page, at start and whenever it
+changes, as `postMessage({ type: 'factory-twin:height', height })`. The message goes to the
+parent's origin (`location.ancestorOrigins`, else the `document.referrer` origin; `'*'` only when
+neither is known, which is harmless for a pixel height). The parent sizes the iframe to it:
+
 ```html
 <iframe
-  src="/factory-twin/index.html?embed=1&lang=pl"
+  id="factory-twin"
+  src="https://kokot.it/factory-twin/index.html?embed=1&lang=pl"
   title="Factory Twin: digital twin of a production hall with an AI assistant"
-  style="width: 100%; aspect-ratio: 16 / 9; border: 0"
+  style="display: block; width: 100%; height: 560px; border: 0"
   loading="lazy"
 ></iframe>
+<script>
+  const frame = document.getElementById('factory-twin');
+  window.addEventListener('message', (e) => {
+    // accept the message only from the app's origin and from this iframe
+    if (e.origin !== new URL(frame.src).origin || e.source !== frame.contentWindow) return;
+    if (e.data?.type !== 'factory-twin:height' || !Number.isFinite(e.data.height)) return;
+    frame.style.height = `${e.data.height}px`;
+  });
+</script>
 ```
+
+The embedded layout takes its height from its width only: the scene keeps fixed proportions
+(`--embed-stage-ratio`, 4:3 beside the chat, 1:1 above it on narrow frames) and the chat fits
+next to or below it. Resizing the iframe to the reported height therefore does not change the
+height again, so there is no resize loop; on narrow frames the height grows only as the chat
+answer grows. A browser test embeds the build on another origin and checks that the messages
+stop once the answer has played and that the frame shows its content without an inner scrollbar.
 
 `<html data-chat="busy|idle">` reflects whether an answer is playing. The render loop pauses when
 the tab is hidden or the iframe is scrolled out of view, the pixel ratio is capped at 1.75, and
@@ -178,13 +200,13 @@ what the tool returns, so recordings cannot drift from the data.
 ## Tests and quality
 
 ```bash
-npm test               # 245 unit, DOM and HTTP-level tests (Vitest)
+npm test               # 264 unit, DOM and HTTP-level tests (Vitest)
 npm run lint           # ESLint + Prettier
 npm run typecheck
 npm run build
 npm run check:wording  # copy check over the built site and the docs
 npm run check:language # English everywhere except the Polish UI strings and sample data
-npm run test:e2e       # builds, then 7 browser tests in headless Chromium (Playwright)
+npm run test:e2e       # builds, then 19 browser tests in headless Chromium (Playwright)
 ```
 
 CI runs all of them on every push and pull request. The tests cover:
@@ -200,8 +222,9 @@ CI runs all of them on every push and pull request. The tests cover:
   round cap and request parameters.
 - **`POST /api/chat`** on a real local HTTP server: 405, cross-origin 403, 415, 413 over 64 KiB,
   400, 503 without a key, 429/502 error mapping, no internal error text leaked.
-- **Browser tests**: the static build plays a scenario without any `/api` request, embed mode, the
-  pixel-ratio cap, the render loop pausing in a hidden tab, and reduced motion.
+- **Browser tests**: the static build plays a scenario without any `/api` request, embed mode and
+  its height messages to a host page on another origin (no resize loop), the pixel-ratio cap, the
+  render loop pausing in a hidden tab, and reduced motion.
 - **Brand**: the scene's colours are pinned to the brand palette, and no colour literal lives
   outside `tokens.css`.
 

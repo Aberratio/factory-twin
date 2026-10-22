@@ -2,6 +2,8 @@
 // Run with `npm run test:e2e` (builds first). Covers what unit tests cannot see:
 // the page runs with no server API, an answer moves the scene, embed mode, the DPR cap,
 // the hidden-tab pause and prefers-reduced-motion.
+import { createServer, type Server } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { chromium, type Browser, type Page } from 'playwright';
 import type { PreviewServer } from 'vite';
 import { preview } from 'vite';
@@ -245,5 +247,84 @@ describe('scene labels stay inside the scene', () => {
         }
       });
     }
+  }
+});
+
+describe('embedded on another site: the frame reports its height', () => {
+  // The host page is served on another origin (127.0.0.1 vs localhost), like kokot.it framing the
+  // build. Its listener is the README snippet: check e.origin, then size the iframe to the height.
+  let host: Server;
+  let hostUrl: string;
+
+  beforeAll(async () => {
+    host = createServer((req, res) => {
+      const url = new URL(req.url ?? '/', 'http://127.0.0.1');
+      const width = Number(url.searchParams.get('width') ?? 1000);
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.end(`<!doctype html><html><body style="margin:0">
+        <iframe id="twin" src="${base}?embed=1&lang=en&scenario=quality-alarm"
+          title="Factory Twin" style="display:block;width:${width}px;height:300px;border:0"></iframe>
+        <script>
+          window.messages = [];
+          const frame = document.getElementById('twin');
+          window.addEventListener('message', (e) => {
+            if (e.origin !== '${new URL(base).origin}') return;
+            if (e.source !== frame.contentWindow) return;
+            if (!e.data || e.data.type !== 'factory-twin:height') return;
+            window.messages.push({ height: e.data.height, origin: e.origin });
+            frame.style.height = e.data.height + 'px';
+          });
+        </script></body></html>`);
+    });
+    await new Promise<void>((resolve) => host.listen(0, '127.0.0.1', resolve));
+    hostUrl = `http://127.0.0.1:${(host.address() as AddressInfo).port}/case-study`;
+  });
+
+  afterAll(() => new Promise<void>((resolve) => host.close(() => resolve())));
+
+  type Message = { height: number; origin: string };
+  const messages = (page: Page) =>
+    page.evaluate(() => (window as unknown as { messages: Message[] }).messages);
+
+  for (const width of [1000, 420]) {
+    it(`${width}px wide: the host receives the height and the count settles (no resize loop)`, async () => {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+      const errors: string[] = [];
+      page.on('pageerror', (e) => errors.push(e.message));
+      try {
+        await page.goto(`${hostUrl}?width=${width}`);
+        await expect.poll(async () => (await messages(page)).length).toBeGreaterThan(0);
+        const frame = page.frames().find((f) => f.url().startsWith(base));
+        if (!frame) throw new Error('embedded frame not found');
+        // let the autoplayed answer finish, so the chat has reached its final size
+        await frame.waitForFunction(() => document.documentElement.dataset.chat === 'idle', null, {
+          timeout: 20_000,
+        });
+        await page.waitForTimeout(1000);
+        const settled = await messages(page);
+        await page.waitForTimeout(2000);
+        const later = await messages(page);
+
+        expect(later.length).toBe(settled.length);
+        expect(later.length).toBeLessThan(20);
+        expect(new Set(later.map((m) => m.origin))).toEqual(new Set([new URL(base).origin]));
+        const last = later.at(-1)!.height;
+        expect(last).toBeGreaterThan(300);
+        // the frame is exactly as tall as its content: nothing cut off, no inner scrollbar
+        const frameHeight = await page
+          .locator('#twin')
+          .evaluate((f) => Math.round(f.getBoundingClientRect().height));
+        expect(frameHeight).toBe(last);
+        const inner = await frame.evaluate(() => ({
+          scroll: document.documentElement.scrollHeight,
+          client: document.documentElement.clientHeight,
+        }));
+        expect(inner.scroll).toBeLessThanOrEqual(inner.client);
+        expect(await frame.locator('#scene canvas').count()).toBe(1);
+        expect(errors).toEqual([]);
+      } finally {
+        await page.close();
+      }
+    });
   }
 });

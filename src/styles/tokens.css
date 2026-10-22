@@ -222,6 +222,10 @@
   --blur: 6px;
   --chat-width: 380px;
   --chat-width-embed: 340px;
+  /* embed: the scene keeps these proportions, so the frame's height follows its width only */
+  --embed-stage-ratio: 4 / 3;
+  --embed-stage-ratio-narrow: 1 / 1;
+  --embed-stage-min-height: 26rem;
   --card-width: 320px;
   --log-min-height: 12rem;
 }
