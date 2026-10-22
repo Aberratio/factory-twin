@@ -25,7 +25,7 @@ export function loadScenarios(): Scenario[] {
 
 /**
  * Builds a recording without calling any model: every tool result is the real output of the
- * tool on the demo data; only the answer text is scripted. Deterministic by construction.
+ * tool on the sample data; only the answer text is scripted. Deterministic by construction.
  */
 export function buildScriptedRecording(scenario: Scenario, lang: Lang, ds: Dataset): Recording {
   const steps: TranscriptStep[] = scenario.plan.map((call, i) => {

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { TOOL_DEFINITIONS, executeTool } from '../src/agent/tools';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
 // Every expected figure below was worked out by hand from src/data/*.csv,
 // with the plant snapshot at 2026-10-21T10:00 (src/data/plant.json).
-const ds = demoDataset();
+const ds = sampleDataset();
 const run = (name: string, input: unknown = {}) => executeTool(ds, name, input);
 
 function ok<T = Record<string, unknown>>(name: string, input: unknown = {}): T {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { cameraPose, machinePosition, OVERVIEW } from '../src/scene/layout';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
-const ds = demoDataset();
+const ds = sampleDataset();
 
 describe('scene layout', () => {
   it('places every machine at a distinct spot', () => {

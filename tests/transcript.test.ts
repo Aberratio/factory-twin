@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseRecording, parseTranscript } from '../src/agent/transcript';
 import { executeTool, TOOL_DEFINITIONS } from '../src/agent/tools';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
 // A live answer arrives over HTTP and a recording from a JSON file: both are untrusted until parsed.
 
@@ -72,7 +72,7 @@ describe('parseRecording', () => {
 
 describe('tool registry', () => {
   it('has a handler for every advertised tool', () => {
-    const ds = demoDataset();
+    const ds = sampleDataset();
     for (const t of TOOL_DEFINITIONS) {
       const r = executeTool(ds, t.name, {});
       expect(r.ok || !r.error.startsWith('Unknown tool'), t.name).toBe(true);

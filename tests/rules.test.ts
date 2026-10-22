@@ -4,7 +4,7 @@ import { executeTool } from '../src/agent/tools';
 import type { Plant } from '../src/domain/types';
 
 // Small hand-made plants that hit the edges of each status / risk rule.
-// The demo data never sits exactly on a boundary, so these pin the rules themselves.
+// The sample data never sits exactly on a boundary, so these pin the rules themselves.
 
 const plant: Plant = {
   company: { name: 'Test Works', site: 'T', fictional: true },

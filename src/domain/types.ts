@@ -17,7 +17,7 @@ export interface Machine {
 
 export interface Plant {
   company: { name: string; site: string; fictional: boolean };
-  /** "Now" for the whole demo, in plant-local time. Every query is relative to it. */
+  /** "Now" for the whole app, in plant-local time. Every query is relative to it. */
   snapshot: string;
   thresholds: {
     qualityAlarmRejectRate: number;

@@ -2,9 +2,9 @@ import type Anthropic from '@anthropic-ai/sdk';
 import { describe, expect, it } from 'vitest';
 import { runAgentTurn, type MessagesClient, AgentError } from '../server/agent';
 import { executeTool } from '../src/agent/tools';
-import { demoDataset } from './helpers';
+import { sampleDataset } from './helpers';
 
-const ds = demoDataset();
+const ds = sampleDataset();
 
 type Block = Anthropic.Beta.BetaContentBlock;
 
