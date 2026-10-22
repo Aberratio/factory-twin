@@ -66,3 +66,10 @@ describe('buildDataset', () => {
     ).toThrow(/L9-M9/);
   });
 });
+
+describe('sample plant', () => {
+  it('names the site in both UI languages', () => {
+    const ds = sampleDataset();
+    expect(ds.plant.company.site).toEqual({ en: 'Hall A', pl: 'Hala A' });
+  });
+});

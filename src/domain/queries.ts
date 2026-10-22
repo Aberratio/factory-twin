@@ -282,7 +282,7 @@ export function plantOverview(ds: Dataset) {
   const riskCount = (r: OrderRisk) => orders.filter((o) => o.risk === r).length;
   return {
     company: ds.plant.company.name,
-    site: ds.plant.company.site,
+    site: ds.plant.company.site.en,
     snapshot: ds.plant.snapshot,
     lines: ds.lines.map((l) => ({
       id: l.id,

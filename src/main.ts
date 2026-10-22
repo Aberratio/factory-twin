@@ -69,7 +69,7 @@ function render(): void {
   const t = strings(lang);
   document.documentElement.lang = lang;
   $('brand-sub').textContent =
-    `${ds.plant.company.name} · ${ds.plant.company.site} — ${t.subtitle}`;
+    `${ds.plant.company.name} · ${ds.plant.company.site[lang]} — ${t.subtitle}`;
   const modeLabel = LIVE ? t.modeLive : t.modeRecorded;
   const mode = $('mode-label');
   mode.textContent = modeLabel;
