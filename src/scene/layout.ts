@@ -53,3 +53,15 @@ export function cameraPose(ds: Dataset, target: FocusTarget): CameraPose {
     target: { x: p.x, y: 1, z: p.z },
   };
 }
+
+/**
+ * Camera-to-target distance below which the view counts as a close-up. Close up, the far line
+ * labels crowd the edges of the view, so they are hidden. Halfway between the line pose (~24)
+ * and the overview (~44), so it holds for focus actions and for manual zoom alike.
+ */
+export const CLOSE_VIEW_DISTANCE = 34;
+
+export function isCloseView(pose: CameraPose): boolean {
+  const { position: p, target: t } = pose;
+  return Math.hypot(p.x - t.x, p.y - t.y, p.z - t.z) < CLOSE_VIEW_DISTANCE;
+}
