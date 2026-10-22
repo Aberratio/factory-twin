@@ -1,5 +1,6 @@
 import './styles/tokens.css';
 import './styles/app.css';
+import logoUrl from './assets/brand/logo.svg';
 import { loadDataset } from './data/browser';
 import { machineStatusRows, plantOverview } from './domain/queries';
 import { isLang } from './domain/langs';
@@ -66,7 +67,12 @@ function render(): void {
 
   const link = document.createElement('a');
   link.href = 'https://kokot.it';
-  link.textContent = 'kokot.it';
+  link.className = 'footer-brand';
+  const logo = document.createElement('img');
+  logo.src = logoUrl;
+  logo.alt = 'kokot.it';
+  logo.height = 14;
+  link.append(logo);
   $('footer').replaceChildren(`${t.footer} `, link);
 
   scene.setLang(lang);

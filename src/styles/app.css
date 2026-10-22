@@ -15,9 +15,13 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
-  font-size: var(--text-md);
-  line-height: var(--leading);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-selection);
 }
 
 button,
@@ -27,7 +31,7 @@ input {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -49,7 +53,7 @@ input {
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-line);
   background: var(--color-surface);
 }
 .brand {
@@ -72,7 +76,7 @@ input {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   white-space: nowrap;
@@ -83,7 +87,7 @@ input {
 }
 .lang-switch {
   display: flex;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
@@ -97,7 +101,7 @@ input {
   cursor: pointer;
 }
 .lang-switch button[aria-pressed='true'] {
-  background: var(--color-surface-2);
+  background: var(--color-surface-raised);
   color: var(--color-text);
 }
 
@@ -142,7 +146,7 @@ input {
   gap: var(--space-2);
   padding: var(--space-1) var(--space-3);
   background: color-mix(in srgb, var(--color-surface) 88%, transparent);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
   font-size: var(--text-sm);
   backdrop-filter: blur(var(--blur));
@@ -185,9 +189,9 @@ input {
   font-size: var(--text-2xs);
   color: var(--color-text);
   background: color-mix(in srgb, var(--color-surface) 80%, transparent);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-line);
   border-left: 3px solid var(--status-running);
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   padding: var(--chip-padding);
   white-space: nowrap;
   transition: opacity 0.3s;
@@ -226,9 +230,9 @@ input {
   width: min(var(--card-width), calc(100% - 2 * var(--space-3)));
   padding: var(--space-3) var(--space-4);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-2);
   font-size: var(--text-sm);
 }
 .machine-card h2 {
@@ -273,11 +277,11 @@ input {
   flex-direction: column;
   min-height: 0;
   background: var(--color-surface);
-  border-left: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-line);
 }
 .chat-head {
   padding: var(--space-4);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-line);
 }
 .chat-head h2 {
   margin: 0;
@@ -293,11 +297,11 @@ input {
   flex-wrap: wrap;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-line);
 }
 .scenario {
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
   padding: var(--space-1) var(--space-3);
   font-size: var(--text-sm);
@@ -328,13 +332,13 @@ input {
 }
 .msg--user {
   align-self: flex-end;
-  background: var(--color-surface-2);
-  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-md) var(--radius-md) 2px var(--radius-md);
   padding: var(--space-2) var(--space-3);
 }
 .msg--agent {
-  border-left: 2px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent-2);
   padding: 0 0 0 var(--space-3);
 }
 .msg--error {
@@ -361,13 +365,13 @@ input {
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
   color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
   padding: var(--chip-padding);
 }
 .step--action {
-  color: var(--color-accent);
-  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  color: var(--color-accent-2);
+  border-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent);
 }
 .step--error {
   color: var(--color-danger);
@@ -382,7 +386,7 @@ input {
 .machine-ref {
   font-family: var(--font-mono);
   font-size: 0.95em;
-  color: var(--color-accent);
+  color: var(--color-accent-2);
   background: none;
   border: 0;
   border-bottom: 1px dotted currentColor;
@@ -393,13 +397,13 @@ input {
   display: flex;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-line);
 }
 .composer input {
   flex: 1;
   min-width: 0;
   background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
 }
@@ -418,7 +422,7 @@ input {
 }
 .composer-note {
   padding: var(--space-3) var(--space-4);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-line);
   color: var(--color-text-muted);
   font-size: var(--text-xs);
 }
@@ -431,11 +435,25 @@ input {
   padding: var(--space-2) var(--space-4);
   color: var(--color-text-muted);
   font-size: var(--text-xs);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-line);
   background: var(--color-bg);
+}
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
 }
 .footer a {
   color: var(--color-text-muted);
+}
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+}
+.footer-brand img {
+  display: block;
+  height: var(--space-4);
+  width: auto;
 }
 
 .visually-hidden {
@@ -475,7 +493,7 @@ input {
   }
   .chat {
     border-left: 0;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-line);
   }
   .brand-sub,
   .badge--mode {

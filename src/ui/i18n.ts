@@ -78,7 +78,7 @@ const STRINGS = {
     askAboutPrompt: (id: string) => `Co się dzieje z ${id}?`,
     sceneLabel:
       'Widok 3D hali produkcyjnej. Przeciągnij, aby obrócić, przewiń, aby przybliżyć, kliknij maszynę, aby zobaczyć szczegóły.',
-    footer: 'Veldra Components to firma fikcyjna. Demo:',
+    footer: 'Veldra Components to firma fikcyjna. Demo by',
     tools: {
       get_plant_overview: 'przegląd hali',
       get_machine_status: 'status maszyn',
