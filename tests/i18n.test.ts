@@ -21,11 +21,19 @@ describe('UI dictionaries', () => {
     expect(keys(DICTIONARIES.pl)).toEqual(keys(DICTIONARIES.en));
   });
 
-  it('have no empty strings', () => {
-    for (const dict of Object.values(DICTIONARIES)) {
-      for (const [key, value] of Object.entries(dict)) {
-        if (typeof value === 'string') expect(value.trim(), key).not.toBe('');
-      }
+  // every string, nested dictionaries such as `tools` included, as [path, value]
+  const strings = (o: object, prefix = ''): [string, string][] =>
+    Object.entries(o).flatMap(([k, v]): [string, string][] => {
+      if (typeof v === 'string') return [[`${prefix}${k}`, v]];
+      if (v && typeof v === 'object') return strings(v, `${prefix}${k}.`);
+      return [];
+    });
+
+  it('have no empty strings, nested dictionaries included', () => {
+    for (const [lang, dict] of Object.entries(DICTIONARIES)) {
+      const all = strings(dict);
+      expect(all.some(([key]) => key.startsWith('tools.'))).toBe(true);
+      for (const [key, value] of all) expect(value.trim(), `${lang}: ${key}`).not.toBe('');
     }
   });
 });
